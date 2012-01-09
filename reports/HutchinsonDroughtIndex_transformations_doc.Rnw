@@ -1,0 +1,729 @@
+\documentclass[a4paper]{article}   
+\usepackage{cite} 
+\usepackage{hyperref} 
+\usepackage{longtable} 
+\usepackage{rotating}
+\begin{document}
+\title{HUTCHINSONDROUGHTINDEX} 
+\author{Ivan C. Hanigan$^{1}$}
+\date{\today}                 
+\maketitle
+\begin{itemize}
+\item [$^1$] National Centre for Epidemiology and Population Health, \\Australian National University.
+\end{itemize}
+
+\setcounter{page}{1}
+\pagenumbering{roman}
+\tableofcontents 
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\section{Introduction}
+The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1992}.  This climatic drought index is shown graphically for a location in the `Central West' SD of NSW in Figure \ref{fig:CentralWestDrought8283.png}.
+
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#tools,  create working dir
+######################
+      
+
+ outdir <- '~/data/drought/HutchinsonDroughtIndex'
+ dir.create(outdir, recursive = T)
+ setwd(outdir)
+ 
+@
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#tools,  Drought tools
+######################
+      
+
+
+ if (!require(rgdal)) install.packages('rgdal'); require(rgdal)
+ if (!require(geosphere)) install.packages('geosphere'); require(geosphere)
+ if (!require(plyr)) install.packages('plyr'); require(plyr)
+
+
+ 
+@
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#tools,  dlMonthly
+######################
+      
+
+ 
+ dlMonthly <- function(site, dataDir){
+  # a function designed to download up to date rainfall station data from bom website
+  wd <- getwd()
+  setwd(dataDir)
+  readLines(  sprintf('http://www.bom.gov.au/jsp/ncc/cdio/weatherData/av?p_nccObsCode=139&p_display_type=dataFile&p_startYear=&p_stn_num=%s',site),
+  n=1)
+  download.file(sprintf('http://www.bom.gov.au/tmp/cdio/IDCJAC0001_%s.zip',site),
+  sprintf('IDCJAC0001_%s.zip',site))
+  # system(sprintf('sh getZipContents.sh IDCJAC0001_%s.zip',site))
+  unzip(paste('IDCJAC0001_',site,'.zip',sep=''),junkpaths=T)
+  setwd(wd)
+  }
+
+ 
+@
+
+\subsection{droughtIndex}
+
+<<eval=FALSE,echo=TRUE,keep.source=TRUE>>=	
+######################
+#tools,  droughtIndex
+######################
+      
+
+ 
+ droughtIndex<-function(data,years,droughtThreshold=.375){
+  # a drought index based on integrated six-monthly rainfall percentiles.
+  # based on Professor Mike Hutchinson's work described in 
+  # Smith D, Hutchinson M, McArthur R. Climatic and Agricultural Drought: Payments and Policy. 
+  # Canberra, ACT: Centre for Resource and Environmental Studies, Australian National University. 1992.  
+ 
+  # Ivan C Hanigan
+  # June 2011.
+  # GPL2
+
+  # my input data are always a data.frame with 4 columns 'date','year','month','rain'
+   
+  #calculate M month totals
+  # started with 6 (current and prior months)
+  x<-ts(data[,4],start=1,end=c(years,12),frequency=12)
+  x<-c(rep(NA,5),x+lag(x,1)+lag(x,2)+lag(x,3)+lag(x,4)+lag(x,5))
+  data$sixmnthtot<-x
+  data<-na.omit(data)
+  
+  # rank in percentage terms with respect to the rainfall totals 
+  # for the same sequence of 6-months over all years of record
+  dataout_final=matrix(nrow=0,ncol=7)
+  
+  for(i in 1:12){
+  	x<-data[data$month==i,5]
+  	#x<-na.omit(x)
+  	y<-(rank(x)-1)/(length(x)-1)
+  	# checkpct<-cbind(data[data$month==i,],y)
+  	# plot(checkpct$sixmnthtot,checkpct$y)
+  	# rescale between -4 and +4 to replicate palmer index 
+  	z<-8*(y-.5)
+  	# defualts set the threshold at -1 which is upper limit of mild drought in palmer index (3/8ths, or the 37.5th percentile) 
+  	drought<-x<=quantile(x,droughtThreshold)
+  	# calculate the drought index for any months that fall below the threshold
+  	zd<-z*drought
+  	# save out to the data
+  	dataout<-data[data$month==i,]
+  	dataout$index<-z
+  	dataout$indexBelowThreshold<-zd
+  	dataout_final=rbind(dataout_final,dataout)
+  	}
+  		
+  data<-dataout_final[order(dataout_final$date),]
+  
+  # now calculate the indices
+  data$count<-as.numeric(0)
+  
+  for(j in 2:nrow(data)){
+  	data$count[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
+  	ifelse(data$indexBelowThreshold[j-1]!=0,1+data$count[j-1],
+  	1)
+  	)
+  	}
+  
+  # enhanced drought revocation threshold
+  # In the enhanced version rather than stop counting when the rescaled percentiles rise above -1.0, 
+  # we keep counting the months (or adding the negative anomalies) 
+  # if the rescaled percentile is below 0.0 AND the drought threshold has already been reached. 
+  # If the threshold has not been reached, then stop counting (or adding) as before 
+  # if the rescaled percentile rises above -1.0.
+  
+  data$count2<-data$count
+  # j=1080 # 1980-06
+  # data[j,]
+  
+  for(j in 2:nrow(data)){ 
+  data$count2[j] <- if(data$count2[j-1] >= 5 & data$index[j] <= 0){
+  	data$count2[j-1] + 1
+  	} else {		
+  	# ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
+  	data$count2[j]
+  	}
+  }
+  
+  
+  data$sums<-as.numeric(0)
+  
+  for(j in 2:nrow(data)){
+  	data$sums[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
+  	ifelse(data$indexBelowThreshold[j-1]!=0,
+  	data$indexBelowThreshold[j]+data$sums[j-1],
+  	data$indexBelowThreshold[j]))
+  	}
+  	
+  
+  data$sums2<-data$sums
+  # j=1069 # 1980-06
+  # data[j,]
+  
+  for(j in 2:nrow(data)){ 
+  data$sums2[j] <- if(data$sums2[j-1] <= -17.5 & data$index[j] <= 0){
+  	data$sums2[j-1] + data$index[j]
+  	} else {		
+  	# ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
+  	data$sums2[j]
+  	}
+  }
+  
+  droughtIndices<-data
+  return(droughtIndices)
+  }
+
+ 
+@
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#tools,  create download directories
+######################
+      
+
+ 
+ # create a data storage directory to store downloaded data
+ 
+  bomDir <- file.path('data/bom_HQ_monthly_prcp')
+  dir.create(bomDir, recursive = T)
+  
+  absDir <- file.path('data/abs_sd')
+  dir.create(absDir, recursive = T)
+  
+  # and remember the project root directory
+  rootdir <- getwd()
+  
+ 
+@
+
+\subsection{Download spatial data}
+
+%% \subsection{Download Weather Data}
+ Instructions for using R to download and analyse data from the Australian Bureau of Statistics (\url{http://www.abs.gov.au}) and the Australian Bureau of Meteorology (\url{ http:/www.bom.gov.au}) websites are included.
+ 
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#load,  Download spatial data
+######################
+      
+
+
+  # newnode data download notes.
+  # newnode change work dir to download area
+ if(!file.exists(file.path(absDir,'aussd.Rdata'))){ 
+  setwd(absDir)
+  
+  download.file('http://www.abs.gov.au/AUSSTATS/subscriber.nsf/log?openagent&SD06aAUST.zip&1259.0.30.002&Data%20Cubes&56AEC033DFC11A5CCA2571BF007E5185&0&2006&04.08.2006&Latest', 'SD06aAUST.zip', mode = 'wb')
+  unzip('SD06aAUST.zip',junkpaths=T)
+  
+  sink('readme.txt')
+  cat(paste('Australian Bureau of Statistics Statistical Divisions 2006 
+  downloaded on', Sys.Date(),
+  '
+  from http://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1259.0.30.0022006?OpenDocument')
+  )
+  sink()
+  
+  # and load
+  sd <- readOGR('SD06aAUST.mif', layer = 'SD06aAUST')
+  # might take a while
+  head(sd@data)
+  plot(sd)
+  dev.off()
+  save.image('aussd.Rdata')
+
+ } else {
+  # OR if already loaded 
+  setwd(absDir)
+  load('aussd.Rdata')
+}
+# NB You may want to change the code to calculate the index for another type of ABS spatial unit.  If so you can find data at http://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1259.0.30.0022006?OpenDocument
+
+ 
+@
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#load,  subset the SDs to NSW
+######################
+      
+
+ # sd@data$SD_NAME_2006 == 'Central West' & 
+ sd2 <-  sd[ sd@data$STATE_CODE_2006 == 1,]
+ plot(sd2)
+ axis(1);axis(2); box()
+ plot(sd, add = T)
+ names(sd2@data)
+ # writeOGR(sd2,'centralwestsd.shp','centralwestsd','ESRI Shapefile')
+ # test <- readShapePoly('centralwestsd.sd')
+ # not work? ignore
+ rm(sd)
+ save.image('nswsd.Rdata')
+
+ # newnode get the centroid of the Central West
+ coords <- centroid(sd2[sd2@data$SD_NAME_2006 == 'Central West' &  sd2@data$STATE_CODE_2006 == 1,])
+
+ 
+@
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#load,  subset the SDs to Vic
+######################
+      
+
+ load('aussd.Rdata')
+
+ sd2 <-  sd[ sd@data$STATE_CODE_2006 == 2,]
+ plot(sd2)
+ axis(1);axis(2); box()
+ # Look up Seymour coordinates from Wikipedia
+ points(145.13, -37.03, pch = 16)
+ names(sd2@data)
+ sd3 <- sd2[sd2@data$SD_NAME_2006 == 'Goulburn' &  sd2@data$STATE_CODE_2006 == 2,]
+ plot(sd3, add = T, col = 'grey')
+ points(145.13, -37.03, pch = 16)
+
+ rm(sd)
+ save.image('vicsd.Rdata')
+ 
+ # newnode get the centroid of the Seymour SD
+ coords <- centroid(sd3)
+ 
+ setwd(rootdir)
+ 
+@
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#load,  Download the Rainfall Station location data
+######################
+      
+
+if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){ 
+     
+ setwd(bomDir)
+ sink('readme.txt')
+ cat(paste('Bureau of Meteorology High Quality Monthly precipitation data 
+ downloaded on', Sys.Date(),
+ '
+ from ftp://ftp.bom.gov.au/anon/home/ncc/www/change/HQmonthlyR/HQ_monthly_prcp_txt.tar')
+ )
+ sink()
+ download.file('ftp://ftp.bom.gov.au/anon/home/ncc/www/change/HQmonthlyR/HQ_monthly_prcp_txt.tar','HQ_monthly_prcp_txt.tar',mode='wb')
+ untar('HQ_monthly_prcp_txt.tar', exdir= 'HQ_monthly_prcp_txt')
+
+ # check
+ d <- read.table('HQ_monthly_prcp_txt/HQMR_stations.txt',header=F,skip=0,nrow=1,as.is=T)
+ d
+ # ok fixed width
+ nchar(d)
+ 
+ # V1 V2 V3 V4 V5 V6 
+  # 4  6  6  2  9 11 
+ # actually not correct
+ widths <- c(7,7,7,7,41)
+ 
+ d2 <- read.fwf('HQ_monthly_prcp_txt/HQMR_stations.txt',widths=widths,header=F,skip=0,as.is=T,comment.char='|',strip.white=T)
+ str(d2)
+ head(d2)
+ tail(d2)
+ write.csv(d2,'HQ_monthly_prcp_stations.csv', row.names = F)
+ } else {
+ setwd(bomDir)
+ d2 <- read.csv('HQ_monthly_prcp_stations.csv')
+ }
+ 
+ 
+@
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#load,  revert to project root dir
+######################
+      
+
+ setwd(rootdir)
+ 
+@
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#load,  Plot the NSW SD and stations
+######################
+      
+
+ 
+ load(file.path(absDir,'nswsd.Rdata'))
+ epsg <- make_EPSG()
+ 
+ d2 <- read.csv(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))
+ ## Treat data frame as spatial points
+ pt.stations <- SpatialPointsDataFrame(cbind(d2$V3,d2$V2),d2,
+   proj4string=CRS(epsg$prj4[epsg$code %in% '4283']))
+ 
+
+ # get distances
+ coords <- centroid(sd2[sd2@data$SD_NAME_2006 == 'Central West' &  sd2@data$STATE_CODE_2006 == 1,])
+ summary(pt.stations)
+ dist2pt <- distVincentyEllipsoid(pt.stations,coords)
+ 
+ d <- pt.stations[which(dist2pt<150000),]
+ head(d@data)
+
+ d@data 
+ 
+ # make a map of the region
+ png(file.path(rootdir,'nswsds.png'),res=200,width = 1500, height = 1000)
+ plot(sd2, col = 'grey', xlim = c(140,155))
+ box();axis(1);axis(2)
+ plot(pt.stations, add = T)
+ points(coords)
+ # plot(sd2, col = 'darkgrey', add= T)
+ plot(d, pch = '*', cex = 2.5, add = T, col = 'red')
+ # text(pt.stations$V3,pt.stations$V2,pt.stations$V5,cex=0.5)
+ points(coords, pch = 16)
+ dev.off()
+ 
+ 
+@
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#load,  go for a SD wide average rainfall using these stations
+######################
+      
+
+
+ setwd(bomDir)
+ df4 <- matrix(nrow=0,ncol=4)
+ for(i in 1:nrow(d@data)){
+  # i <- 1
+  filename <- paste('0',as.character(d@data[i,1]),sep='')
+  if(!file.exists(paste('IDCJAC0001_', filename,'_Data1.csv',sep=''))){ 
+   dlMonthly(filename, getwd())
+   }
+  df <- read.csv(paste('IDCJAC0001_', filename,'_Data1.csv',sep=''))
+  df$date <- as.Date(paste(df$Year,df$Month,1,sep='-'))
+  df<-subset(df,Quality == 'Y',select=c(date,Year,Month,Monthly.Precipitation.Total..millimetres.))
+  head(df)
+  fulldaterange <- as.data.frame(seq(min(df$date),max(df$date),1))
+  fulldaterange$day <- substring(fulldaterange[,1],9,10)
+  fulldaterange <- subset(fulldaterange, day == '01')
+  names(fulldaterange) <- c('date','day')
+  df2 <- merge(fulldaterange,df,all.x=T)
+  df2 <- subset(df2, select = c(date,Year, Month,Monthly.Precipitation.Total..millimetres.))
+  # what happens with NAs?
+  # stupid impute
+  df2$rain <- as.numeric(0)
+  # subset(df2,is.na(df2$Monthly.Precipitation.Total..millimetres.))
+  df2$month <- substring(df2[,'date'],6,7)
+  df2$year  <- substring(df2[,'date'],1,4)
+  
+    for(i in 1:nrow(df2)){
+      # i <- 1
+      mm <- df2[i,'month']
+      df2$rain[i] <- ifelse(is.na(df2$Monthly.Precipitation.Total..millimetres.[i]), 
+      mean(subset(df2, month == mm,select = c(Monthly.Precipitation.Total..millimetres.)),na.rm=T),
+  	  df2$Monthly.Precipitation.Total..millimetres.[i])
+      }
+  
+    tail(df2)
+ 
+  table(df2$year)
+  df3 <- subset(df2, year > min(year) & year < max(year), select = c(date, year, month, rain))
+  df3$year <- as.numeric(df3$year)
+  df3$month <- as.numeric(df3$month)
+  
+  df4 <- rbind(df4, df3)
+  }
+ setwd(rootdir) 
+ # newnode average for entire sd
+ df5 <- ddply(df4, c('date','year', 'month'), function(df)mean(df$rain))
+ names(df5) <- c('date',  'year' , 'month' ,'rain')
+
+ 
+@
+
+\subsection{Calculate the drought index}
+
+
+ The Drought index is shown in Figure \ref{fig:CentralWestDrought8283.png} for the SD of `Central West NSW' during a period which includes a strong drought (1979-83). The raw monthly rainfall totals are integrated to rolling 6-monthly totals (both shown in first panel) which are then ranked into percentiles by month and this is rescaled to range between -4 and +4 in keeping with the range of the Palmer Index \cite{Palmer1965} (second panel).  Mild drought is below -1 in the Palmer index and so consecutive months below this threshold are counted. In the original method 5 or more consecutive months was defined as the beginning of a drought, which continued until the rescaled percentiles exceed -1 again  (third panel).  The enhanced method imposes a more conservative threshold of zero (the median) to break a drought (fourth panel).
+
+There was also an alternative method devised by Hutchinson where the rescaled percentile values are integrated using conditional cumulative sums.  That method is included in the R code however we decided not to use it in this study because the counting method is simpler and gives similar results.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=1\textwidth]{CentralWestDrought8283.png}
+\caption{The Drought index in Central West NSW with the enhanced method shown in the fourth panel.}
+\label{fig:CentralWestDrought8283.png}
+\end{figure}
+%\clearpage
+
+
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#do,  Calculate the drought index
+######################
+      
+
+  
+
+ drt <- droughtIndex(data=df5,years=length(names(table(df5$year))))
+ qc3=drt[drt$year>=1979 & drt$year < 1984,]
+ 
+ png(file.path(rootdir,'CentralWestDrought8283.png'),res=200,width = 2100, height = 1000)
+ par(mfrow=c(4,1),mar=c(2.5,2,1.5,1))
+ plot(qc3$date,qc3$rain,type='l',main='Central West NSW: raw monthly rainfall')
+ #points(qc3$date,qc3$rain)
+ 
+ lines(qc3$date,qc3$sixmnthtot/6, lwd = 2) #,type='l',main='6-monthly total rainfall')
+ points(qc3$date,qc3$sixmnthtot/6)
+ 
+ plot(qc3$date,qc3$index,type='l',main='Rescaled percentiles -4 to +4, -1 is Palmer Index Mild Drought',ylim=c(-4,4))
+ points(qc3$date,qc3$index)
+ segments(min(qc3$date),-1,max(qc3$date),-1)
+ segments(min(qc3$date),0,max(qc3$date),0,lty=2)
+ plot(qc3$date,qc3$count,type='l',main='Counts below -1 threshold, count of 5 or more is a drought')
+ points(qc3$date,qc3$count)
+ segments(min(qc3$date),5,max(qc3$date),5)
+ 
+ plot(qc3$date,qc3$count2,type='l',main='Enhanced counts of months if already passed count of 5 and percentiles less than 50%')
+ points(qc3$date,qc3$count2)
+ segments(min(qc3$date),5,max(qc3$date),5)
+ dev.off()
+ 
+ 
+@
+
+\subsection{replicate Fig3.5 from Hutchinson}
+Figure 3.5 from the original paper shows the index at Seymour Victoria 1966-1986.  
+This town is in the Goulburn Statistical Division
+
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#do,  replicate Fig3.5 from Hutchinson
+######################
+      
+
+
+@
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#load,  plot the Victorian SD and stations
+######################
+      
+
+ 
+ load(file.path(absDir,'vicsd.Rdata'))
+ epsg <- make_EPSG()
+ 
+ ## Treat data frame as spatial points
+ pt.stations <- SpatialPointsDataFrame(cbind(d2$V3,d2$V2),d2,
+   proj4string=CRS(epsg$prj4[epsg$code %in% '4283']))
+ 
+
+ # get distances
+ coords <- centroid(sd2[sd2@data$SD_NAME_2006 == 'Goulburn' &  sd2@data$STATE_CODE_2006 == 2,])
+ summary(pt.stations)
+ dist2pt <- distVincentyEllipsoid(pt.stations,coords)
+ 
+ d <- pt.stations[which(dist2pt<150000),]
+ head(d@data)
+
+ d@data 
+ 
+ # make a map of the region
+ png(file.path(rootdir,'vicsds.png'),res=200,width = 1500, height = 1000)
+ plot(sd2, col = 'grey', xlim = c(140,155))
+ box();axis(1);axis(2)
+ plot(pt.stations, add = T)
+ points(coords)
+ # plot(sd2, col = 'darkgrey', add= T)
+ plot(d, pch = '*', cex = 2.5, add = T, col = 'red')
+ # text(pt.stations$V3,pt.stations$V2,pt.stations$V5,cex=0.5)
+ points(coords, pch = 16)
+ dev.off()
+ 
+ 
+@
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#load,  SD wide average
+######################
+      
+
+
+ setwd(bomDir)
+ df4 <- matrix(nrow=0,ncol=4)
+ for(i in 1:nrow(d@data)){
+  # i <- 1
+  filename <- paste('0',as.character(d@data[i,1]),sep='')
+  if(!file.exists(paste('IDCJAC0001_', filename,'_Data1.csv',sep=''))){ 
+   dlMonthly(filename, getwd())
+   }
+  df <- read.csv(paste('IDCJAC0001_', filename,'_Data1.csv',sep=''))
+  df$date <- as.Date(paste(df$Year,df$Month,1,sep='-'))
+  df<-subset(df,Quality == 'Y',select=c(date,Year,Month,Monthly.Precipitation.Total..millimetres.))
+  head(df)
+  fulldaterange <- as.data.frame(seq(min(df$date),max(df$date),1))
+  fulldaterange$day <- substring(fulldaterange[,1],9,10)
+  fulldaterange <- subset(fulldaterange, day == '01')
+  names(fulldaterange) <- c('date','day')
+  df2 <- merge(fulldaterange,df,all.x=T)
+  df2 <- subset(df2, select = c(date,Year, Month,Monthly.Precipitation.Total..millimetres.))
+  # what happens with NAs?
+  # stupid impute
+  df2$rain <- as.numeric(0)
+  # subset(df2,is.na(df2$Monthly.Precipitation.Total..millimetres.))
+  df2$month <- substring(df2[,'date'],6,7)
+  df2$year  <- substring(df2[,'date'],1,4)
+  
+    for(i in 1:nrow(df2)){
+      # i <- 1
+      mm <- df2[i,'month']
+      df2$rain[i] <- ifelse(is.na(df2$Monthly.Precipitation.Total..millimetres.[i]), 
+      mean(subset(df2, month == mm,select = c(Monthly.Precipitation.Total..millimetres.)),na.rm=T),
+  	  df2$Monthly.Precipitation.Total..millimetres.[i])
+      }
+  
+    tail(df2)
+ 
+  table(df2$year)
+  df3 <- subset(df2, year > min(year) & year < max(year), select = c(date, year, month, rain))
+  df3$year <- as.numeric(df3$year)
+  df3$month <- as.numeric(df3$month)
+  
+  df4 <- rbind(df4, df3)
+  }
+ setwd(rootdir) 
+ # newnode average for entire sd
+ df5 <- ddply(df4, c('date','year', 'month'), function(df)mean(df$rain))
+ names(df5) <- c('date',  'year' , 'month' ,'rain')
+
+ 
+@
+
+\subsection{Seymour drought index}
+
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#do,  Seymour drought index
+######################
+      
+
+  
+
+ drt <- droughtIndex(data=df5,years=length(names(table(df5$year))))
+ qc3=drt[drt$year>=1966 & drt$year < 1986,]
+ 
+ png(file.path(rootdir,'SeymourDrought6686.png'),res=200,width = 1500, height = 1000)
+ par(mfrow=c(4,1),mar=c(2.5,2,1.5,1))
+ plot(qc3$date,qc3$rain,type='l',main='Seymour VIC: raw monthly rainfall')
+ #points(qc3$date,qc3$rain)
+ axis(1,at=as.Date(paste(1966:1985,1,1,sep='-')), labels = 1966:1985)
+ lines(qc3$date,qc3$sixmnthtot/6, lwd = 2) #,type='l',main='6-monthly total rainfall')
+ points(qc3$date,qc3$sixmnthtot/6)
+ axis(1,at=as.Date(paste(1966:1985,1,1,sep='-')), labels = 1966:1985) 
+ plot(qc3$date,qc3$index,type='l',main='rescaled percentiles -4 to +4, -1 is Palmer Index Mild Drought',ylim=c(-4,4))
+ points(qc3$date,qc3$index)
+ segments(min(qc3$date),-1,max(qc3$date),-1)
+ segments(min(qc3$date),0,max(qc3$date),0,lty=2)
+ plot(qc3$date,qc3$sums,type='l',main='sums below -1 threshold, sums of -17.5 or less is a drought')
+ points(qc3$date,qc3$sums)
+ segments(min(qc3$date),-17.5,max(qc3$date),-17.5)
+ axis(1,at=as.Date(paste(1966:1985,1,1,sep='-')), labels = 1966:1985) 
+ plot(qc3$date,qc3$sums2,type='l',main='enhanced sums of months if already passed threshold of -17.5 and percentiles less than 50%')
+ points(qc3$date,qc3$sums2)
+ segments(min(qc3$date),-17.5,max(qc3$date),-17.5)
+ axis(1,at=as.Date(paste(1966:1985,1,1,sep='-')), labels = 1966:1985)
+ dev.off()
+
+ 
+@
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=\textwidth]{SeymourDrought6686.png}
+\caption{SeymourDrought6686.png}
+\label{fig:SeymourDrought6686.png}
+\end{figure}
+\clearpage
+
+\subsection{Integration by Conditional Summation}
+
+ %% unabridged
+ \subsection{The Summation Method}
+ When the index is calculated using the sum of each consecutive month's rainfall deficiency score the resulting measure addresses  the question of how intense the drought is, rather than just the duration which is provided by the counting method.  This version  of the index is shown in Figure \ref{fig:SeymourDrought9499enhanced.png}.
+ 
+
+ \begin{figure}[!h]
+ \centering
+ \includegraphics[width=\textwidth]{SeymourDrought9499enhanced.png}
+ \caption{SeymourDrought9499enhanced.png}
+ \label{fig:SeymourDrought9499enhanced.png}
+ \end{figure}
+ \clearpage
+
+ 
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#do,  Integration by Conditional Summation
+######################
+      
+
+
+ # when is there an example of the enhancement making a drought longer?
+  tail(drt[drt$sums2!=drt$sums,])
+ # plot this one
+  qc3=drt[drt$year>=1994 & drt$year < 1999,]
+ 
+ png(file.path(rootdir,'SeymourDrought9499enhanced.png'),res=200,width = 2100, height = 1000)
+ par(mfrow=c(4,1),mar=c(2.5,2,1.5,1))
+ plot(qc3$date,qc3$rain,type='l',main='Seymour VIC: raw monthly rainfall')
+ #points(qc3$date,qc3$rain)
+ axis(1,at=as.Date(paste(1994:1998,1,1,sep='-')), labels = 1994:1998)
+ lines(qc3$date,qc3$sixmnthtot/6, lwd = 2) #,type='l',main='6-monthly total rainfall')
+ points(qc3$date,qc3$sixmnthtot/6)
+ axis(1,at=as.Date(paste(1994:1998,1,1,sep='-')), labels = 1994:1998) 
+ plot(qc3$date,qc3$index,type='l',main='rescaled percentiles -4 to +4, -1 is Palmer Index Mild Drought',ylim=c(-4,4))
+ points(qc3$date,qc3$index)
+ segments(min(qc3$date),-1,max(qc3$date),-1)
+ segments(min(qc3$date),0,max(qc3$date),0,lty=2)
+ plot(qc3$date,qc3$sums,type='l',main='sums below -1 threshold, sums of -17.5 or less is a drought')
+ points(qc3$date,qc3$sums)
+ segments(min(qc3$date),-17.5,max(qc3$date),-17.5)
+ axis(1,at=as.Date(paste(1994:1998,1,1,sep='-')), labels = 1994:1998) 
+ plot(qc3$date,qc3$sums2,type='l',main='enhanced sums of months if already passed threshold of -17.5 and percentiles less than 50%')
+ points(qc3$date,qc3$sums2)
+ segments(min(qc3$date),-17.5,max(qc3$date),-17.5)
+ axis(1,at=as.Date(paste(1994:1998,1,1,sep='-')), labels = 1994:1998)
+ dev.off()
+ 
+ 
+@
+
+\subsection{References}
+
+
+\begin{thebibliography}{1}
+
+\bibitem{Smith1992}
+Smith, D.~I, Hutchinson, M.~F,  \& McArthur, R.~J.
+\newblock (1992) {\em {Climatic and Agricultural Drought: Payments and
+  Policy}}.
+\newblock (Centre for Resource and Environmental Studies, Australian National
+  University, Canberra, Australia).
+
+\bibitem{Palmer1965}
+Palmer, W.
+\newblock (1965) {\em {Meteorological drought. Research paper No. 45}}.
+\newblock (U.S. Department of Commerce Weather Bureau, Washington, D.C.).
+
+\end{thebibliography}
+
+
+
+
+\end{document}
