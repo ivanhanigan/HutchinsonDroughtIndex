@@ -1,4 +1,29 @@
 ###############################################################################
+# newnode create working dir
+	
+ outdir <- '~/data/drought/HutchinsonDroughtIndex'
+ dir.create(outdir, recursive = T)
+ setwd(outdir)
+ 
+###############################################################################
+# newnode create download directories
+	
+ 
+ # create a data storage directory to store downloaded data
+ 
+  bomDir <- file.path('data/bom_HQ_monthly_prcp')
+  dir.create(bomDir, recursive = T)
+  
+  absDir <- file.path('data/abs_sd')
+  dir.create(absDir, recursive = T)
+  
+  # and remember the project root directory
+  rootdir <- getwd()
+  
+  
+  
+ 
+###############################################################################
 # newnode Download spatial data
 	
 
@@ -47,10 +72,11 @@
  # test <- readShapePoly('centralwestsd.sd')
  # not work? ignore
  rm(sd)
- save.image('nswsd.Rdata')
 
  # newnode get the centroid of the Central West
  coords <- centroid(sd2[sd2@data$SD_NAME_2006 == 'Central West' &  sd2@data$STATE_CODE_2006 == 1,])
+
+ save.image('nswsd.Rdata')
 
  
 ###############################################################################
@@ -69,11 +95,13 @@
  points(145.13, -37.03, pch = 16)
 
  rm(sd)
- save.image('vicsd.Rdata')
+
  
  # newnode get the centroid of the Seymour SD
  coords <- centroid(sd3)
  
+ save.image('vicsd.Rdata')
+  
  setwd(rootdir)
  
 ###############################################################################
@@ -120,7 +148,7 @@ if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){
  setwd(rootdir)
  
 ###############################################################################
-# newnode Plot the NSW SD and stations
+# newnode get stations within study region
 	
  
  load(file.path(absDir,'nswsd.Rdata'))
@@ -140,20 +168,6 @@ if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){
  d <- pt.stations[which(dist2pt<150000),]
  head(d@data)
 
- d@data 
- 
- # make a map of the region
- png(file.path(rootdir,'nswsds.png'),res=200,width = 1500, height = 1000)
- plot(sd2, col = 'grey', xlim = c(140,155))
- box();axis(1);axis(2)
- plot(pt.stations, add = T)
- points(coords)
- # plot(sd2, col = 'darkgrey', add= T)
- plot(d, pch = '*', cex = 2.5, add = T, col = 'red')
- # text(pt.stations$V3,pt.stations$V2,pt.stations$V5,cex=0.5)
- points(coords, pch = 16)
- dev.off()
- 
  
 ###############################################################################
 # newnode go for a SD wide average rainfall using these stations
@@ -189,94 +203,7 @@ if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){
       mm <- df2[i,'month']
       df2$rain[i] <- ifelse(is.na(df2$Monthly.Precipitation.Total..millimetres.[i]), 
       mean(subset(df2, month == mm,select = c(Monthly.Precipitation.Total..millimetres.)),na.rm=T),
-  	  df2$Monthly.Precipitation.Total..millimetres.[i])
-      }
-  
-    tail(df2)
- 
-  table(df2$year)
-  df3 <- subset(df2, year > min(year) & year < max(year), select = c(date, year, month, rain))
-  df3$year <- as.numeric(df3$year)
-  df3$month <- as.numeric(df3$month)
-  
-  df4 <- rbind(df4, df3)
-  }
- setwd(rootdir) 
- # newnode average for entire sd
- df5 <- ddply(df4, c('date','year', 'month'), function(df)mean(df$rain))
- names(df5) <- c('date',  'year' , 'month' ,'rain')
-
- 
-###############################################################################
-# newnode plot the Victorian SD and stations
-	
- 
- load(file.path(absDir,'vicsd.Rdata'))
- epsg <- make_EPSG()
- 
- ## Treat data frame as spatial points
- pt.stations <- SpatialPointsDataFrame(cbind(d2$V3,d2$V2),d2,
-   proj4string=CRS(epsg$prj4[epsg$code %in% '4283']))
- 
-
- # get distances
- coords <- centroid(sd2[sd2@data$SD_NAME_2006 == 'Goulburn' &  sd2@data$STATE_CODE_2006 == 2,])
- summary(pt.stations)
- dist2pt <- distVincentyEllipsoid(pt.stations,coords)
- 
- d <- pt.stations[which(dist2pt<150000),]
- head(d@data)
-
- d@data 
- 
- # make a map of the region
- png(file.path(rootdir,'vicsds.png'),res=200,width = 1500, height = 1000)
- plot(sd2, col = 'grey', xlim = c(140,155))
- box();axis(1);axis(2)
- plot(pt.stations, add = T)
- points(coords)
- # plot(sd2, col = 'darkgrey', add= T)
- plot(d, pch = '*', cex = 2.5, add = T, col = 'red')
- # text(pt.stations$V3,pt.stations$V2,pt.stations$V5,cex=0.5)
- points(coords, pch = 16)
- dev.off()
- 
- 
-###############################################################################
-# newnode SD wide average
-	
-
- setwd(bomDir)
- df4 <- matrix(nrow=0,ncol=4)
- for(i in 1:nrow(d@data)){
-  # i <- 1
-  filename <- paste('0',as.character(d@data[i,1]),sep='')
-  if(!file.exists(paste('IDCJAC0001_', filename,'_Data1.csv',sep=''))){ 
-   dlMonthly(filename, getwd())
-   }
-  df <- read.csv(paste('IDCJAC0001_', filename,'_Data1.csv',sep=''))
-  df$date <- as.Date(paste(df$Year,df$Month,1,sep='-'))
-  df<-subset(df,Quality == 'Y',select=c(date,Year,Month,Monthly.Precipitation.Total..millimetres.))
-  head(df)
-  fulldaterange <- as.data.frame(seq(min(df$date),max(df$date),1))
-  fulldaterange$day <- substring(fulldaterange[,1],9,10)
-  fulldaterange <- subset(fulldaterange, day == '01')
-  names(fulldaterange) <- c('date','day')
-  df2 <- merge(fulldaterange,df,all.x=T)
-  df2 <- subset(df2, select = c(date,Year, Month,Monthly.Precipitation.Total..millimetres.))
-  # what happens with NAs?
-  # stupid impute
-  df2$rain <- as.numeric(0)
-  # subset(df2,is.na(df2$Monthly.Precipitation.Total..millimetres.))
-  df2$month <- substring(df2[,'date'],6,7)
-  df2$year  <- substring(df2[,'date'],1,4)
-  
-    for(i in 1:nrow(df2)){
-      # i <- 1
-      mm <- df2[i,'month']
-      df2$rain[i] <- ifelse(is.na(df2$Monthly.Precipitation.Total..millimetres.[i]), 
-      mean(subset(df2, month == mm,select = c(Monthly.Precipitation.Total..millimetres.)),na.rm=T),
-  	  df2$Monthly.Precipitation.Total..millimetres.[i])
+    df2$Monthly.Precipitation.Total..millimetres.[i])
       }
   
     tail(df2)

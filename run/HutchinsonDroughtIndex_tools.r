@@ -1,11 +1,4 @@
 ###############################################################################
-# newnode create working dir
-	
- outdir <- '~/data/drought/HutchinsonDroughtIndex'
- dir.create(outdir, recursive = T)
- setwd(outdir)
- 
-###############################################################################
 # newnode Drought tools
 	
 
@@ -61,35 +54,35 @@
   dataout_final=matrix(nrow=0,ncol=7)
   
   for(i in 1:12){
-  	x<-data[data$month==i,5]
-  	#x<-na.omit(x)
-  	y<-(rank(x)-1)/(length(x)-1)
-  	# checkpct<-cbind(data[data$month==i,],y)
-  	# plot(checkpct$sixmnthtot,checkpct$y)
-  	# rescale between -4 and +4 to replicate palmer index 
-  	z<-8*(y-.5)
-  	# defualts set the threshold at -1 which is upper limit of mild drought in palmer index (3/8ths, or the 37.5th percentile) 
-  	drought<-x<=quantile(x,droughtThreshold)
-  	# calculate the drought index for any months that fall below the threshold
-  	zd<-z*drought
-  	# save out to the data
-  	dataout<-data[data$month==i,]
-  	dataout$index<-z
-  	dataout$indexBelowThreshold<-zd
-  	dataout_final=rbind(dataout_final,dataout)
-  	}
-  		
+  x<-data[data$month==i,5]
+  #x<-na.omit(x)
+  y<-(rank(x)-1)/(length(x)-1)
+  # checkpct<-cbind(data[data$month==i,],y)
+  # plot(checkpct$sixmnthtot,checkpct$y)
+  # rescale between -4 and +4 to replicate palmer index 
+  z<-8*(y-.5)
+  # defualts set the threshold at -1 which is upper limit of mild drought in palmer index (3/8ths, or the 37.5th percentile) 
+  drought<-x<=quantile(x,droughtThreshold)
+  # calculate the drought index for any months that fall below the threshold
+  zd<-z*drought
+  # save out to the data
+  dataout<-data[data$month==i,]
+  dataout$index<-z
+  dataout$indexBelowThreshold<-zd
+  dataout_final=rbind(dataout_final,dataout)
+  }
+  
   data<-dataout_final[order(dataout_final$date),]
   
   # now calculate the indices
   data$count<-as.numeric(0)
   
   for(j in 2:nrow(data)){
-  	data$count[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
-  	ifelse(data$indexBelowThreshold[j-1]!=0,1+data$count[j-1],
-  	1)
-  	)
-  	}
+  data$count[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
+  ifelse(data$indexBelowThreshold[j-1]!=0,1+data$count[j-1],
+  1)
+  )
+  }
   
   # enhanced drought revocation threshold
   # In the enhanced version rather than stop counting when the rescaled percentiles rise above -1.0, 
@@ -104,23 +97,23 @@
   
   for(j in 2:nrow(data)){ 
   data$count2[j] <- if(data$count2[j-1] >= 5 & data$index[j] <= 0){
-  	data$count2[j-1] + 1
-  	} else {		
-  	# ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
-  	data$count2[j]
-  	}
+  data$count2[j-1] + 1
+  } else {
+  # ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
+  data$count2[j]
+  }
   }
   
   
   data$sums<-as.numeric(0)
   
   for(j in 2:nrow(data)){
-  	data$sums[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
-  	ifelse(data$indexBelowThreshold[j-1]!=0,
-  	data$indexBelowThreshold[j]+data$sums[j-1],
-  	data$indexBelowThreshold[j]))
-  	}
-  	
+  data$sums[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
+  ifelse(data$indexBelowThreshold[j-1]!=0,
+  data$indexBelowThreshold[j]+data$sums[j-1],
+  data$indexBelowThreshold[j]))
+  }
+  
   
   data$sums2<-data$sums
   # j=1069 # 1980-06
@@ -128,31 +121,15 @@
   
   for(j in 2:nrow(data)){ 
   data$sums2[j] <- if(data$sums2[j-1] <= -17.5 & data$index[j] <= 0){
-  	data$sums2[j-1] + data$index[j]
-  	} else {		
-  	# ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
-  	data$sums2[j]
-  	}
+  data$sums2[j-1] + data$index[j]
+  } else {
+  # ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
+  data$sums2[j]
+  }
   }
   
   droughtIndices<-data
   return(droughtIndices)
   }
 
- 
-###############################################################################
-# newnode create download directories
-	
- 
- # create a data storage directory to store downloaded data
- 
-  bomDir <- file.path('data/bom_HQ_monthly_prcp')
-  dir.create(bomDir, recursive = T)
-  
-  absDir <- file.path('data/abs_sd')
-  dir.create(absDir, recursive = T)
-  
-  # and remember the project root directory
-  rootdir <- getwd()
-  
  
