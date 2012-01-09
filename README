@@ -1,2 +1,12 @@
-helloworld
-this is the Hutchinson Drought Index
+The Hutchinson Drought Index
+
+The drought index was invented by Professor Mike Hutchinson at the ANU. 
+This project includes R codes to describe the calculations and 
+also to download dummy data to play with.
+
+The REPORTS directory contains the Sweave file and output pdf,
+the RUN directory contains the Tangled R code as seperate scripts
+(for easier source()ing).
+
+Ivan Hanigan
+2012-01-09
