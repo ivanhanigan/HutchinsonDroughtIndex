@@ -82,13 +82,13 @@
 	
  load('aussd.Rdata')
 
- sd2 <-  sd[ sd@data$STATE_CODE_2006 == 2,]
- plot(sd2)
+ sd2v <-  sd[ sd@data$STATE_CODE_2006 == 2,]
+ plot(sd2v)
  axis(1);axis(2); box()
  # Look up Seymour coordinates from Wikipedia
  points(145.13, -37.03, pch = 16)
- names(sd2@data)
- sd3 <- sd2[sd2@data$SD_NAME_2006 == 'Goulburn' &  sd2@data$STATE_CODE_2006 == 2,]
+ names(sd2v@data)
+ sd3 <- sd2v[sd2v@data$SD_NAME_2006 == 'Goulburn' &  sd2v@data$STATE_CODE_2006 == 2,]
  plot(sd3, add = T, col = 'grey')
  points(145.13, -37.03, pch = 16)
 

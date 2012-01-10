@@ -280,13 +280,13 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
 
  load('aussd.Rdata')
 
- sd2 <-  sd[ sd@data$STATE_CODE_2006 == 2,]
- plot(sd2)
+ sd2v <-  sd[ sd@data$STATE_CODE_2006 == 2,]
+ plot(sd2v)
  axis(1);axis(2); box()
  # Look up Seymour coordinates from Wikipedia
  points(145.13, -37.03, pch = 16)
- names(sd2@data)
- sd3 <- sd2[sd2@data$SD_NAME_2006 == 'Goulburn' &  sd2@data$STATE_CODE_2006 == 2,]
+ names(sd2v@data)
+ sd3 <- sd2v[sd2v@data$SD_NAME_2006 == 'Goulburn' &  sd2v@data$STATE_CODE_2006 == 2,]
  plot(sd3, add = T, col = 'grey')
  points(145.13, -37.03, pch = 16)
 
@@ -354,8 +354,8 @@ if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){
 @
 
 \subsection{get stations within study region}
-
-<<eval=FALSE,echo=TRUE,keep.source=TRUE>>=	
+We will use all the stations within 150km of the centroid of the Statistical Division.
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
 ######################
 #load,  get stations within study region
 ######################
@@ -388,7 +388,7 @@ if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){
       
 
  
- d@data 
+
  
  # make a map of the region
  png(file.path(getwd(),'reports','nswsds.png'),res=200,width = 1500, height = 1000)
@@ -549,7 +549,7 @@ This town is in the Goulburn Statistical Division
  
 
  # get distances
- coords <- centroid(sd2[sd2@data$SD_NAME_2006 == 'Goulburn' &  sd2@data$STATE_CODE_2006 == 2,])
+ coords <- centroid(sd2v[sd2v@data$SD_NAME_2006 == 'Goulburn' &  sd2v@data$STATE_CODE_2006 == 2,])
  summary(pt.stations)
  dist2pt <- distVincentyEllipsoid(pt.stations,coords)
  
@@ -560,19 +560,18 @@ This town is in the Goulburn Statistical Division
 @
 <<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
 ######################
-#load_vic,  plot the Victorian SD and stations
+#check,  plot the Victorian SD and stations
 ######################
       
 
- d@data 
  
  # make a map of the region
- png(file.path(rootdir,'reports','vicsd.png'),res=200,width = 1500, height = 1000)
- plot(sd2, col = 'grey', xlim = c(140,155))
+ png(file.path(rootdir,'reports','vicsds.png'),res=200,width = 1500, height = 1000)
+ plot(sd2v, col = 'grey', xlim = c(140,155))
  box();axis(1);axis(2)
  plot(pt.stations, add = T)
  points(coords)
- # plot(sd2, col = 'darkgrey', add= T)
+ # plot(sd2v, col = 'darkgrey', add= T)
  plot(d, pch = '*', cex = 2.5, add = T, col = 'red')
  # text(pt.stations$V3,pt.stations$V2,pt.stations$V5,cex=0.5)
  points(coords, pch = 16)
@@ -755,10 +754,7 @@ Palmer, W.
 
 \end{thebibliography}
 
-
-\subsection{go}
-
-<<eval=FALSE,echo=TRUE,keep.source=TRUE>>=	
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
 ######################
 #go,  go
 ######################
