@@ -23,7 +23,7 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
 
 <<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
 ######################
-#tools,  create working dir
+#load,  create working dir
 ######################
       
 
@@ -102,35 +102,35 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
   dataout_final=matrix(nrow=0,ncol=7)
   
   for(i in 1:12){
-  	x<-data[data$month==i,5]
-  	#x<-na.omit(x)
-  	y<-(rank(x)-1)/(length(x)-1)
-  	# checkpct<-cbind(data[data$month==i,],y)
-  	# plot(checkpct$sixmnthtot,checkpct$y)
-  	# rescale between -4 and +4 to replicate palmer index 
-  	z<-8*(y-.5)
-  	# defualts set the threshold at -1 which is upper limit of mild drought in palmer index (3/8ths, or the 37.5th percentile) 
-  	drought<-x<=quantile(x,droughtThreshold)
-  	# calculate the drought index for any months that fall below the threshold
-  	zd<-z*drought
-  	# save out to the data
-  	dataout<-data[data$month==i,]
-  	dataout$index<-z
-  	dataout$indexBelowThreshold<-zd
-  	dataout_final=rbind(dataout_final,dataout)
-  	}
-  		
+  x<-data[data$month==i,5]
+  #x<-na.omit(x)
+  y<-(rank(x)-1)/(length(x)-1)
+  # checkpct<-cbind(data[data$month==i,],y)
+  # plot(checkpct$sixmnthtot,checkpct$y)
+  # rescale between -4 and +4 to replicate palmer index 
+  z<-8*(y-.5)
+  # defualts set the threshold at -1 which is upper limit of mild drought in palmer index (3/8ths, or the 37.5th percentile) 
+  drought<-x<=quantile(x,droughtThreshold)
+  # calculate the drought index for any months that fall below the threshold
+  zd<-z*drought
+  # save out to the data
+  dataout<-data[data$month==i,]
+  dataout$index<-z
+  dataout$indexBelowThreshold<-zd
+  dataout_final=rbind(dataout_final,dataout)
+  }
+  
   data<-dataout_final[order(dataout_final$date),]
   
   # now calculate the indices
   data$count<-as.numeric(0)
   
   for(j in 2:nrow(data)){
-  	data$count[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
-  	ifelse(data$indexBelowThreshold[j-1]!=0,1+data$count[j-1],
-  	1)
-  	)
-  	}
+  data$count[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
+  ifelse(data$indexBelowThreshold[j-1]!=0,1+data$count[j-1],
+  1)
+  )
+  }
   
   # enhanced drought revocation threshold
   # In the enhanced version rather than stop counting when the rescaled percentiles rise above -1.0, 
@@ -145,23 +145,23 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
   
   for(j in 2:nrow(data)){ 
   data$count2[j] <- if(data$count2[j-1] >= 5 & data$index[j] <= 0){
-  	data$count2[j-1] + 1
-  	} else {		
-  	# ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
-  	data$count2[j]
-  	}
+  data$count2[j-1] + 1
+  } else {
+  # ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
+  data$count2[j]
+  }
   }
   
   
   data$sums<-as.numeric(0)
   
   for(j in 2:nrow(data)){
-  	data$sums[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
-  	ifelse(data$indexBelowThreshold[j-1]!=0,
-  	data$indexBelowThreshold[j]+data$sums[j-1],
-  	data$indexBelowThreshold[j]))
-  	}
-  	
+  data$sums[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
+  ifelse(data$indexBelowThreshold[j-1]!=0,
+  data$indexBelowThreshold[j]+data$sums[j-1],
+  data$indexBelowThreshold[j]))
+  }
+  
   
   data$sums2<-data$sums
   # j=1069 # 1980-06
@@ -169,11 +169,11 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
   
   for(j in 2:nrow(data)){ 
   data$sums2[j] <- if(data$sums2[j-1] <= -17.5 & data$index[j] <= 0){
-  	data$sums2[j-1] + data$index[j]
-  	} else {		
-  	# ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
-  	data$sums2[j]
-  	}
+  data$sums2[j-1] + data$index[j]
+  } else {
+  # ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
+  data$sums2[j]
+  }
   }
   
   droughtIndices<-data
@@ -184,7 +184,7 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
 @
 <<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
 ######################
-#tools,  create download directories
+#load,  create download directories
 ######################
       
 
@@ -264,10 +264,11 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
  # test <- readShapePoly('centralwestsd.sd')
  # not work? ignore
  rm(sd)
- save.image('nswsd.Rdata')
 
  # newnode get the centroid of the Central West
  coords <- centroid(sd2[sd2@data$SD_NAME_2006 == 'Central West' &  sd2@data$STATE_CODE_2006 == 1,])
+
+ save.image('nswsd.Rdata')
 
  
 @
@@ -290,11 +291,13 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
  points(145.13, -37.03, pch = 16)
 
  rm(sd)
- save.image('vicsd.Rdata')
+
  
  # newnode get the centroid of the Seymour SD
  coords <- centroid(sd3)
  
+ save.image('vicsd.Rdata')
+  
  setwd(rootdir)
  
 @
@@ -349,9 +352,12 @@ if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){
  setwd(rootdir)
  
 @
-<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+
+\subsection{get stations within study region}
+
+<<eval=FALSE,echo=TRUE,keep.source=TRUE>>=	
 ######################
-#load,  Plot the NSW SD and stations
+#load,  get stations within study region
 ######################
       
 
@@ -373,10 +379,19 @@ if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){
  d <- pt.stations[which(dist2pt<150000),]
  head(d@data)
 
+ 
+@
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#check,  Plot the NSW SD and stations
+######################
+      
+
+ 
  d@data 
  
  # make a map of the region
- png(file.path(rootdir,'nswsds.png'),res=200,width = 1500, height = 1000)
+ png(file.path(getwd(),'reports','nswsds.png'),res=200,width = 1500, height = 1000)
  plot(sd2, col = 'grey', xlim = c(140,155))
  box();axis(1);axis(2)
  plot(pt.stations, add = T)
@@ -389,6 +404,14 @@ if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){
  
  
 @
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=\textwidth]{nswsds.png}
+\caption{nswsds.png}
+\label{fig:nswsds.png}
+\end{figure}
+\clearpage
 <<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
 ######################
 #load,  go for a SD wide average rainfall using these stations
@@ -426,7 +449,7 @@ if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){
       mm <- df2[i,'month']
       df2$rain[i] <- ifelse(is.na(df2$Monthly.Precipitation.Total..millimetres.[i]), 
       mean(subset(df2, month == mm,select = c(Monthly.Precipitation.Total..millimetres.)),na.rm=T),
-  	  df2$Monthly.Precipitation.Total..millimetres.[i])
+    df2$Monthly.Precipitation.Total..millimetres.[i])
       }
   
     tail(df2)
@@ -473,7 +496,7 @@ There was also an alternative method devised by Hutchinson where the rescaled pe
  drt <- droughtIndex(data=df5,years=length(names(table(df5$year))))
  qc3=drt[drt$year>=1979 & drt$year < 1984,]
  
- png(file.path(rootdir,'CentralWestDrought8283.png'),res=200,width = 2100, height = 1000)
+ png(file.path(rootdir,'reports','CentralWestDrought8283.png'),res=200,width = 2100, height = 1000)
  par(mfrow=c(4,1),mar=c(2.5,2,1.5,1))
  plot(qc3$date,qc3$rain,type='l',main='Central West NSW: raw monthly rainfall')
  #points(qc3$date,qc3$rain)
@@ -507,11 +530,12 @@ This town is in the Goulburn Statistical Division
 ######################
       
 
-
+ setwd(rootdir)
+ source('run/HutchinsonDroughtIndex_load_vic.r')
 @
 <<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
 ######################
-#load,  plot the Victorian SD and stations
+#load_vic,  get stations within Vitoria study region
 ######################
       
 
@@ -531,11 +555,19 @@ This town is in the Goulburn Statistical Division
  
  d <- pt.stations[which(dist2pt<150000),]
  head(d@data)
+ 
+ 
+@
+<<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
+######################
+#load_vic,  plot the Victorian SD and stations
+######################
+      
 
  d@data 
  
  # make a map of the region
- png(file.path(rootdir,'vicsds.png'),res=200,width = 1500, height = 1000)
+ png(file.path(rootdir,'reports','vicsd.png'),res=200,width = 1500, height = 1000)
  plot(sd2, col = 'grey', xlim = c(140,155))
  box();axis(1);axis(2)
  plot(pt.stations, add = T)
@@ -548,15 +580,23 @@ This town is in the Goulburn Statistical Division
  
  
 @
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=\textwidth]{vicsds.png}
+\caption{vicsds.png}
+\label{fig:vicsds.png}
+\end{figure}
+\clearpage
 <<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
 ######################
-#load,  SD wide average
+#load_vic,  SD wide average
 ######################
       
 
 
  setwd(bomDir)
- df4 <- matrix(nrow=0,ncol=4)
+ df4v <- matrix(nrow=0,ncol=4)
  for(i in 1:nrow(d@data)){
   # i <- 1
   filename <- paste('0',as.character(d@data[i,1]),sep='')
@@ -585,7 +625,7 @@ This town is in the Goulburn Statistical Division
       mm <- df2[i,'month']
       df2$rain[i] <- ifelse(is.na(df2$Monthly.Precipitation.Total..millimetres.[i]), 
       mean(subset(df2, month == mm,select = c(Monthly.Precipitation.Total..millimetres.)),na.rm=T),
-  	  df2$Monthly.Precipitation.Total..millimetres.[i])
+    df2$Monthly.Precipitation.Total..millimetres.[i])
       }
   
     tail(df2)
@@ -595,12 +635,12 @@ This town is in the Goulburn Statistical Division
   df3$year <- as.numeric(df3$year)
   df3$month <- as.numeric(df3$month)
   
-  df4 <- rbind(df4, df3)
+  df4v <- rbind(df4v, df3)
   }
  setwd(rootdir) 
  # newnode average for entire sd
- df5 <- ddply(df4, c('date','year', 'month'), function(df)mean(df$rain))
- names(df5) <- c('date',  'year' , 'month' ,'rain')
+ df5v <- ddply(df4v, c('date','year', 'month'), function(df)mean(df$rain))
+ names(df5v) <- c('date',  'year' , 'month' ,'rain')
 
  
 @
@@ -609,16 +649,16 @@ This town is in the Goulburn Statistical Division
 
 <<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
 ######################
-#do,  Seymour drought index
+#load_vic,  Seymour drought index
 ######################
       
 
   
 
- drt <- droughtIndex(data=df5,years=length(names(table(df5$year))))
+ drt <- droughtIndex(data=df5v,years=length(names(table(df5v$year))))
  qc3=drt[drt$year>=1966 & drt$year < 1986,]
  
- png(file.path(rootdir,'SeymourDrought6686.png'),res=200,width = 1500, height = 1000)
+ png(file.path(rootdir,'reports','SeymourDrought6686.png'),res=200,width = 1500, height = 1000)
  par(mfrow=c(4,1),mar=c(2.5,2,1.5,1))
  plot(qc3$date,qc3$rain,type='l',main='Seymour VIC: raw monthly rainfall')
  #points(qc3$date,qc3$rain)
@@ -643,14 +683,6 @@ This town is in the Goulburn Statistical Division
  
 @
 
-\begin{figure}[!h]
-\centering
-\includegraphics[width=\textwidth]{SeymourDrought6686.png}
-\caption{SeymourDrought6686.png}
-\label{fig:SeymourDrought6686.png}
-\end{figure}
-\clearpage
-
 \subsection{Integration by Conditional Summation}
 
  %% unabridged
@@ -669,7 +701,7 @@ This town is in the Goulburn Statistical Division
  
 <<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
 ######################
-#do,  Integration by Conditional Summation
+#load_vic,  Integration by Conditional Summation
 ######################
       
 
@@ -679,7 +711,7 @@ This town is in the Goulburn Statistical Division
  # plot this one
   qc3=drt[drt$year>=1994 & drt$year < 1999,]
  
- png(file.path(rootdir,'SeymourDrought9499enhanced.png'),res=200,width = 2100, height = 1000)
+ png(file.path(rootdir,'reports','SeymourDrought9499enhanced.png'),res=200,width = 2100, height = 1000)
  par(mfrow=c(4,1),mar=c(2.5,2,1.5,1))
  plot(qc3$date,qc3$rain,type='l',main='Seymour VIC: raw monthly rainfall')
  #points(qc3$date,qc3$rain)
@@ -724,6 +756,21 @@ Palmer, W.
 \end{thebibliography}
 
 
+\subsection{go}
+
+<<eval=FALSE,echo=TRUE,keep.source=TRUE>>=	
+######################
+#go,  go
+######################
+      
+
+ source('run/HutchinsonDroughtIndex_tools.r')
+ source('run/HutchinsonDroughtIndex_load.r')
+ source('run/HutchinsonDroughtIndex_do.r')
+ source('run/HutchinsonDroughtIndex_check.r')
+ 
+@
+\clearpage
 
 
 \end{document}

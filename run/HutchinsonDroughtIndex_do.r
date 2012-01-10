@@ -6,7 +6,7 @@
  drt <- droughtIndex(data=df5,years=length(names(table(df5$year))))
  qc3=drt[drt$year>=1979 & drt$year < 1984,]
  
- png(file.path(rootdir,'CentralWestDrought8283.png'),res=200,width = 2100, height = 1000)
+ png(file.path(rootdir,'reports','CentralWestDrought8283.png'),res=200,width = 2100, height = 1000)
  par(mfrow=c(4,1),mar=c(2.5,2,1.5,1))
  plot(qc3$date,qc3$rain,type='l',main='Central West NSW: raw monthly rainfall')
  #points(qc3$date,qc3$rain)

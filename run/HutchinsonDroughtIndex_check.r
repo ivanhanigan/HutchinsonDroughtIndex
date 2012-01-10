@@ -5,7 +5,7 @@
  d@data 
  
  # make a map of the region
- png(file.path(rootdir,'nswsds.png'),res=200,width = 1500, height = 1000)
+ png(file.path(getwd(),'reports','nswsds.png'),res=200,width = 1500, height = 1000)
  plot(sd2, col = 'grey', xlim = c(140,155))
  box();axis(1);axis(2)
  plot(pt.stations, add = T)

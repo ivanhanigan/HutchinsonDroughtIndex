@@ -25,7 +25,7 @@
  d@data 
  
  # make a map of the region
- png(file.path(rootdir,'vicsd.png'),res=200,width = 1500, height = 1000)
+ png(file.path(rootdir,'reports','vicsd.png'),res=200,width = 1500, height = 1000)
  plot(sd2, col = 'grey', xlim = c(140,155))
  box();axis(1);axis(2)
  plot(pt.stations, add = T)
@@ -97,7 +97,7 @@
  drt <- droughtIndex(data=df5v,years=length(names(table(df5v$year))))
  qc3=drt[drt$year>=1966 & drt$year < 1986,]
  
- png(file.path(rootdir,'SeymourDrought6686.png'),res=200,width = 1500, height = 1000)
+ png(file.path(rootdir,'reports','SeymourDrought6686.png'),res=200,width = 1500, height = 1000)
  par(mfrow=c(4,1),mar=c(2.5,2,1.5,1))
  plot(qc3$date,qc3$rain,type='l',main='Seymour VIC: raw monthly rainfall')
  #points(qc3$date,qc3$rain)
@@ -129,7 +129,7 @@
  # plot this one
   qc3=drt[drt$year>=1994 & drt$year < 1999,]
  
- png(file.path(rootdir,'SeymourDrought9499enhanced.png'),res=200,width = 2100, height = 1000)
+ png(file.path(rootdir,'reports','SeymourDrought9499enhanced.png'),res=200,width = 2100, height = 1000)
  par(mfrow=c(4,1),mar=c(2.5,2,1.5,1))
  plot(qc3$date,qc3$rain,type='l',main='Seymour VIC: raw monthly rainfall')
  #points(qc3$date,qc3$rain)

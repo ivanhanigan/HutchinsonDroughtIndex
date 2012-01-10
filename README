@@ -1,12 +1,36 @@
 The Hutchinson Drought Index
 
-The drought index was invented by Professor Mike Hutchinson at the ANU. 
+The Hutchinson Drought Index (or Drought Severity Index) is a climatic drought index 
+that was designed to reflect agricultural droughts using only rainfall data.
+
+The index was invented by Professor Mike Hutchinson at the ANU. 
 This project includes R codes to describe the calculations and 
 also to download dummy data to play with.
 
-The REPORTS directory contains the Sweave file and output pdf,
-the RUN directory contains the Tangled R code as seperate scripts
-(for easier source()ing).
+Specification:
+This project is designed in two parts: a RUN directory and a REPORTS directory.
+The RUN directory is built using another function I am developing called 'newnode' 
+which I use behind the scenes to create the RUN files and the Sweave file concurrently.
+
+To explain:
+ - I wanted to adopt a modular workflow based on Josh Reich's 'Load, Clean, Func, Do' workflow 
+   cf stackoverflow.
+ - I've renamed the modules 'tools, load, clean, do' and store in the RUN directory.
+ - I've added a 'go' script in the root dir to source the RUN files.
+ - The REPORTS directory contains the Sweave file and output figures/tables to be inserted into it.
+ - I do not evaluate the R codes in the Sweave file, rather I use it to produce a report of 
+   the operations of the RUN files.
+ - the RUN directory can be thought of as just the Tangled R code emedded in the Sweave file. 
+
+I find having the RUN files as seperate scripts rather than a signle Sweave file easier 
+when inserting new work steps (and then just the source()ing the relevant module using 'go').
+
+It also seems easier when colaborating with others; to help them navigate to specific workflow 
+steps that otherwise seem to be entangled in and ad hoc sequence in the Sweave file 
+(due to the evolutionary process of conducting data management and analyses).
+For example the 'check' steps can occur periodically in between 'load' and 'do' steps, 
+but a reader may not be concerned with replicating these after the workflow development 
+is completed.
 
 Ivan Hanigan
-2012-01-09
+2012-01-10

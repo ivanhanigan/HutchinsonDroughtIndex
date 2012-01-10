@@ -20,8 +20,6 @@
   # and remember the project root directory
   rootdir <- getwd()
   
-  
-  
  
 ###############################################################################
 # newnode Download spatial data
