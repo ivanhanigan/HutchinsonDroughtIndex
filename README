@@ -7,6 +7,9 @@ The index was invented by Professor Mike Hutchinson at the ANU.
 This project includes R codes to describe the calculations and 
 also to download dummy data to play with.
 
+Casual readers will probably want to go straight to 
+~/reports/HutchinsonDroughtIndex_transformations_doc.pdf
+
 Specification:
 This project is designed in two parts: a RUN directory and a REPORTS directory.
 The RUN directory is built using another function I am developing called 'newnode' 
