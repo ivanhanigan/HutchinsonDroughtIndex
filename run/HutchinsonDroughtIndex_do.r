@@ -33,4 +33,4 @@
 	
  setwd(rootdir)
  source('run/HutchinsonDroughtIndex_load_vic.r')
-
+ 

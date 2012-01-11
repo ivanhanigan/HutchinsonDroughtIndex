@@ -53,8 +53,8 @@
   # OR if already loaded 
   setwd(absDir)
   load('aussd.Rdata')
-}
-# NB You may want to change the code to calculate the index for another type of ABS spatial unit.  If so you can find data at http://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1259.0.30.0022006?OpenDocument
+ }
+ # NB You may want to change the code to calculate the index for another type of ABS spatial unit.  If so you can find data at http://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1259.0.30.0022006?OpenDocument
 
  
 ###############################################################################
@@ -105,39 +105,39 @@
 ###############################################################################
 # newnode Download the Rainfall Station location data
 	
-if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){ 
+ if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){ 
      
- setwd(bomDir)
- sink('readme.txt')
- cat(paste('Bureau of Meteorology High Quality Monthly precipitation data 
- downloaded on', Sys.Date(),
- '
- from ftp://ftp.bom.gov.au/anon/home/ncc/www/change/HQmonthlyR/HQ_monthly_prcp_txt.tar')
- )
- sink()
- download.file('ftp://ftp.bom.gov.au/anon/home/ncc/www/change/HQmonthlyR/HQ_monthly_prcp_txt.tar','HQ_monthly_prcp_txt.tar',mode='wb')
- untar('HQ_monthly_prcp_txt.tar', exdir= 'HQ_monthly_prcp_txt')
-
- # check
- d <- read.table('HQ_monthly_prcp_txt/HQMR_stations.txt',header=F,skip=0,nrow=1,as.is=T)
- d
- # ok fixed width
- nchar(d)
- 
- # V1 V2 V3 V4 V5 V6 
-  # 4  6  6  2  9 11 
- # actually not correct
- widths <- c(7,7,7,7,41)
- 
- d2 <- read.fwf('HQ_monthly_prcp_txt/HQMR_stations.txt',widths=widths,header=F,skip=0,as.is=T,comment.char='|',strip.white=T)
- str(d2)
- head(d2)
- tail(d2)
- write.csv(d2,'HQ_monthly_prcp_stations.csv', row.names = F)
- } else {
- setwd(bomDir)
- d2 <- read.csv('HQ_monthly_prcp_stations.csv')
- }
+  setwd(bomDir)
+  sink('readme.txt')
+  cat(paste('Bureau of Meteorology High Quality Monthly precipitation data 
+  downloaded on', Sys.Date(),
+  '
+  from ftp://ftp.bom.gov.au/anon/home/ncc/www/change/HQmonthlyR/HQ_monthly_prcp_txt.tar')
+  )
+  sink()
+  download.file('ftp://ftp.bom.gov.au/anon/home/ncc/www/change/HQmonthlyR/HQ_monthly_prcp_txt.tar','HQ_monthly_prcp_txt.tar',mode='wb')
+  untar('HQ_monthly_prcp_txt.tar', exdir= 'HQ_monthly_prcp_txt')
+  
+  # check
+  d <- read.table('HQ_monthly_prcp_txt/HQMR_stations.txt',header=F,skip=0,nrow=1,as.is=T)
+  d
+  # ok fixed width
+  nchar(d)
+  
+  # V1 V2 V3 V4 V5 V6 
+   # 4  6  6  2  9 11 
+  # actually not correct
+  widths <- c(7,7,7,7,41)
+  
+  d2 <- read.fwf('HQ_monthly_prcp_txt/HQMR_stations.txt',widths=widths,header=F,skip=0,as.is=T,comment.char='|',strip.white=T)
+  str(d2)
+  head(d2)
+  tail(d2)
+  write.csv(d2,'HQ_monthly_prcp_stations.csv', row.names = F)
+  } else {
+  setwd(bomDir)
+  d2 <- read.csv('HQ_monthly_prcp_stations.csv')
+  }
  
  
 ###############################################################################
@@ -201,7 +201,7 @@ if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){
       mm <- df2[i,'month']
       df2$rain[i] <- ifelse(is.na(df2$Monthly.Precipitation.Total..millimetres.[i]), 
       mean(subset(df2, month == mm,select = c(Monthly.Precipitation.Total..millimetres.)),na.rm=T),
-    df2$Monthly.Precipitation.Total..millimetres.[i])
+  	  df2$Monthly.Precipitation.Total..millimetres.[i])
       }
   
     tail(df2)

@@ -102,35 +102,35 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
   dataout_final=matrix(nrow=0,ncol=7)
   
   for(i in 1:12){
-  x<-data[data$month==i,5]
-  #x<-na.omit(x)
-  y<-(rank(x)-1)/(length(x)-1)
-  # checkpct<-cbind(data[data$month==i,],y)
-  # plot(checkpct$sixmnthtot,checkpct$y)
-  # rescale between -4 and +4 to replicate palmer index 
-  z<-8*(y-.5)
-  # defualts set the threshold at -1 which is upper limit of mild drought in palmer index (3/8ths, or the 37.5th percentile) 
-  drought<-x<=quantile(x,droughtThreshold)
-  # calculate the drought index for any months that fall below the threshold
-  zd<-z*drought
-  # save out to the data
-  dataout<-data[data$month==i,]
-  dataout$index<-z
-  dataout$indexBelowThreshold<-zd
-  dataout_final=rbind(dataout_final,dataout)
-  }
-  
+  	x<-data[data$month==i,5]
+  	#x<-na.omit(x)
+  	y<-(rank(x)-1)/(length(x)-1)
+  	# checkpct<-cbind(data[data$month==i,],y)
+  	# plot(checkpct$sixmnthtot,checkpct$y)
+  	# rescale between -4 and +4 to replicate palmer index 
+  	z<-8*(y-.5)
+  	# defualts set the threshold at -1 which is upper limit of mild drought in palmer index (3/8ths, or the 37.5th percentile) 
+  	drought<-x<=quantile(x,droughtThreshold)
+  	# calculate the drought index for any months that fall below the threshold
+  	zd<-z*drought
+  	# save out to the data
+  	dataout<-data[data$month==i,]
+  	dataout$index<-z
+  	dataout$indexBelowThreshold<-zd
+  	dataout_final=rbind(dataout_final,dataout)
+  	}
+  		
   data<-dataout_final[order(dataout_final$date),]
   
   # now calculate the indices
   data$count<-as.numeric(0)
   
   for(j in 2:nrow(data)){
-  data$count[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
-  ifelse(data$indexBelowThreshold[j-1]!=0,1+data$count[j-1],
-  1)
-  )
-  }
+  	data$count[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
+  	ifelse(data$indexBelowThreshold[j-1]!=0,1+data$count[j-1],
+  	1)
+  	)
+  	}
   
   # enhanced drought revocation threshold
   # In the enhanced version rather than stop counting when the rescaled percentiles rise above -1.0, 
@@ -145,23 +145,23 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
   
   for(j in 2:nrow(data)){ 
   data$count2[j] <- if(data$count2[j-1] >= 5 & data$index[j] <= 0){
-  data$count2[j-1] + 1
-  } else {
-  # ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
-  data$count2[j]
-  }
+  	data$count2[j-1] + 1
+  	} else {		
+  	# ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
+  	data$count2[j]
+  	}
   }
   
   
   data$sums<-as.numeric(0)
   
   for(j in 2:nrow(data)){
-  data$sums[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
-  ifelse(data$indexBelowThreshold[j-1]!=0,
-  data$indexBelowThreshold[j]+data$sums[j-1],
-  data$indexBelowThreshold[j]))
-  }
-  
+  	data$sums[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
+  	ifelse(data$indexBelowThreshold[j-1]!=0,
+  	data$indexBelowThreshold[j]+data$sums[j-1],
+  	data$indexBelowThreshold[j]))
+  	}
+  	
   
   data$sums2<-data$sums
   # j=1069 # 1980-06
@@ -169,11 +169,11 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
   
   for(j in 2:nrow(data)){ 
   data$sums2[j] <- if(data$sums2[j-1] <= -17.5 & data$index[j] <= 0){
-  data$sums2[j-1] + data$index[j]
-  } else {
-  # ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
-  data$sums2[j]
-  }
+  	data$sums2[j-1] + data$index[j]
+  	} else {		
+  	# ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
+  	data$sums2[j]
+  	}
   }
   
   droughtIndices<-data
@@ -205,7 +205,7 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
 
 \subsection{Download spatial data}
 
-%% \subsection{Download Weather Data}
+ %% \subsection{Download Weather Data}
  Instructions for using R to download and analyse data from the Australian Bureau of Statistics (\url{http://www.abs.gov.au}) and the Australian Bureau of Meteorology (\url{ http:/www.bom.gov.au}) websites are included.
  
 <<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
@@ -243,8 +243,8 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
   # OR if already loaded 
   setwd(absDir)
   load('aussd.Rdata')
-}
-# NB You may want to change the code to calculate the index for another type of ABS spatial unit.  If so you can find data at http://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1259.0.30.0022006?OpenDocument
+ }
+ # NB You may want to change the code to calculate the index for another type of ABS spatial unit.  If so you can find data at http://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1259.0.30.0022006?OpenDocument
 
  
 @
@@ -307,39 +307,39 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
 ######################
       
 
-if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){ 
+ if(!file.exists(file.path(bomDir,'HQ_monthly_prcp_stations.csv'))){ 
      
- setwd(bomDir)
- sink('readme.txt')
- cat(paste('Bureau of Meteorology High Quality Monthly precipitation data 
- downloaded on', Sys.Date(),
- '
- from ftp://ftp.bom.gov.au/anon/home/ncc/www/change/HQmonthlyR/HQ_monthly_prcp_txt.tar')
- )
- sink()
- download.file('ftp://ftp.bom.gov.au/anon/home/ncc/www/change/HQmonthlyR/HQ_monthly_prcp_txt.tar','HQ_monthly_prcp_txt.tar',mode='wb')
- untar('HQ_monthly_prcp_txt.tar', exdir= 'HQ_monthly_prcp_txt')
-
- # check
- d <- read.table('HQ_monthly_prcp_txt/HQMR_stations.txt',header=F,skip=0,nrow=1,as.is=T)
- d
- # ok fixed width
- nchar(d)
- 
- # V1 V2 V3 V4 V5 V6 
-  # 4  6  6  2  9 11 
- # actually not correct
- widths <- c(7,7,7,7,41)
- 
- d2 <- read.fwf('HQ_monthly_prcp_txt/HQMR_stations.txt',widths=widths,header=F,skip=0,as.is=T,comment.char='|',strip.white=T)
- str(d2)
- head(d2)
- tail(d2)
- write.csv(d2,'HQ_monthly_prcp_stations.csv', row.names = F)
- } else {
- setwd(bomDir)
- d2 <- read.csv('HQ_monthly_prcp_stations.csv')
- }
+  setwd(bomDir)
+  sink('readme.txt')
+  cat(paste('Bureau of Meteorology High Quality Monthly precipitation data 
+  downloaded on', Sys.Date(),
+  '
+  from ftp://ftp.bom.gov.au/anon/home/ncc/www/change/HQmonthlyR/HQ_monthly_prcp_txt.tar')
+  )
+  sink()
+  download.file('ftp://ftp.bom.gov.au/anon/home/ncc/www/change/HQmonthlyR/HQ_monthly_prcp_txt.tar','HQ_monthly_prcp_txt.tar',mode='wb')
+  untar('HQ_monthly_prcp_txt.tar', exdir= 'HQ_monthly_prcp_txt')
+  
+  # check
+  d <- read.table('HQ_monthly_prcp_txt/HQMR_stations.txt',header=F,skip=0,nrow=1,as.is=T)
+  d
+  # ok fixed width
+  nchar(d)
+  
+  # V1 V2 V3 V4 V5 V6 
+   # 4  6  6  2  9 11 
+  # actually not correct
+  widths <- c(7,7,7,7,41)
+  
+  d2 <- read.fwf('HQ_monthly_prcp_txt/HQMR_stations.txt',widths=widths,header=F,skip=0,as.is=T,comment.char='|',strip.white=T)
+  str(d2)
+  head(d2)
+  tail(d2)
+  write.csv(d2,'HQ_monthly_prcp_stations.csv', row.names = F)
+  } else {
+  setwd(bomDir)
+  d2 <- read.csv('HQ_monthly_prcp_stations.csv')
+  }
  
  
 @
@@ -449,7 +449,7 @@ We will use all the stations within 150km of the centroid of the Statistical Div
       mm <- df2[i,'month']
       df2$rain[i] <- ifelse(is.na(df2$Monthly.Precipitation.Total..millimetres.[i]), 
       mean(subset(df2, month == mm,select = c(Monthly.Precipitation.Total..millimetres.)),na.rm=T),
-    df2$Monthly.Precipitation.Total..millimetres.[i])
+  	  df2$Monthly.Precipitation.Total..millimetres.[i])
       }
   
     tail(df2)
@@ -474,17 +474,17 @@ We will use all the stations within 150km of the centroid of the Statistical Div
 
  The Drought index is shown in Figure \ref{fig:CentralWestDrought8283.png} for the SD of `Central West NSW' during a period which includes a strong drought (1979-83). The raw monthly rainfall totals are integrated to rolling 6-monthly totals (both shown in first panel) which are then ranked into percentiles by month and this is rescaled to range between -4 and +4 in keeping with the range of the Palmer Index \cite{Palmer1965} (second panel).  Mild drought is below -1 in the Palmer index and so consecutive months below this threshold are counted. In the original method 5 or more consecutive months was defined as the beginning of a drought, which continued until the rescaled percentiles exceed -1 again  (third panel).  The enhanced method imposes a more conservative threshold of zero (the median) to break a drought (fourth panel).
 
-There was also an alternative method devised by Hutchinson where the rescaled percentile values are integrated using conditional cumulative sums.  That method is included in the R code however we decided not to use it in this study because the counting method is simpler and gives similar results.
-
-\begin{figure}[!h]
-\centering
-\includegraphics[width=1\textwidth]{CentralWestDrought8283.png}
-\caption{The Drought index in Central West NSW with the enhanced method shown in the fourth panel.}
-\label{fig:CentralWestDrought8283.png}
-\end{figure}
-%\clearpage
-
-
+ There was also an alternative method devised by Hutchinson where the rescaled percentile values are integrated using conditional cumulative sums.  That method is included in the R code however we decided not to use it in this study because the counting method is simpler and gives similar results.
+ 
+ \begin{figure}[!h]
+ \centering
+ \includegraphics[width=1\textwidth]{CentralWestDrought8283.png}
+ \caption{The Drought index in Central West NSW with the enhanced method shown in the fourth panel.}
+ \label{fig:CentralWestDrought8283.png}
+ \end{figure}
+ %\clearpage
+ 
+ 
 <<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
 ######################
 #do,  Calculate the drought index
@@ -522,8 +522,8 @@ There was also an alternative method devised by Hutchinson where the rescaled pe
 
 \subsection{replicate Fig3.5 from Hutchinson}
 Figure 3.5 from the original paper shows the index at Seymour Victoria 1966-1986.  
-This town is in the Goulburn Statistical Division
-
+ This town is in the Goulburn Statistical Division
+ 
 <<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
 ######################
 #do,  replicate Fig3.5 from Hutchinson
@@ -532,6 +532,7 @@ This town is in the Goulburn Statistical Division
 
  setwd(rootdir)
  source('run/HutchinsonDroughtIndex_load_vic.r')
+ 
 @
 <<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
 ######################
@@ -624,7 +625,7 @@ This town is in the Goulburn Statistical Division
       mm <- df2[i,'month']
       df2$rain[i] <- ifelse(is.na(df2$Monthly.Precipitation.Total..millimetres.[i]), 
       mean(subset(df2, month == mm,select = c(Monthly.Precipitation.Total..millimetres.)),na.rm=T),
-    df2$Monthly.Precipitation.Total..millimetres.[i])
+  	  df2$Monthly.Precipitation.Total..millimetres.[i])
       }
   
     tail(df2)
@@ -738,22 +739,22 @@ This town is in the Goulburn Statistical Division
 \subsection{References}
 
 
-\begin{thebibliography}{1}
-
-\bibitem{Smith1992}
-Smith, D.~I, Hutchinson, M.~F,  \& McArthur, R.~J.
-\newblock (1992) {\em {Climatic and Agricultural Drought: Payments and
-  Policy}}.
-\newblock (Centre for Resource and Environmental Studies, Australian National
-  University, Canberra, Australia).
-
-\bibitem{Palmer1965}
-Palmer, W.
-\newblock (1965) {\em {Meteorological drought. Research paper No. 45}}.
-\newblock (U.S. Department of Commerce Weather Bureau, Washington, D.C.).
-
-\end{thebibliography}
-
+ \begin{thebibliography}{1}
+ 
+ \bibitem{Smith1992}
+ Smith, D.~I, Hutchinson, M.~F,  \& McArthur, R.~J.
+ \newblock (1992) {\em {Climatic and Agricultural Drought: Payments and
+   Policy}}.
+ \newblock (Centre for Resource and Environmental Studies, Australian National
+   University, Canberra, Australia).
+ 
+ \bibitem{Palmer1965}
+ Palmer, W.
+ \newblock (1965) {\em {Meteorological drought. Research paper No. 45}}.
+ \newblock (U.S. Department of Commerce Weather Bureau, Washington, D.C.).
+ 
+ \end{thebibliography}
+ 
 <<eval=FALSE,echo=FALSE,keep.source=TRUE>>=	
 ######################
 #go,  go

@@ -53,7 +53,7 @@
       mm <- df2[i,'month']
       df2$rain[i] <- ifelse(is.na(df2$Monthly.Precipitation.Total..millimetres.[i]), 
       mean(subset(df2, month == mm,select = c(Monthly.Precipitation.Total..millimetres.)),na.rm=T),
-    df2$Monthly.Precipitation.Total..millimetres.[i])
+  	  df2$Monthly.Precipitation.Total..millimetres.[i])
       }
   
     tail(df2)
