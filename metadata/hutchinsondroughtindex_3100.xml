@@ -1,0 +1,309 @@
+
+<codeBook version="1.2.2" ID="hutchinsondroughtindex_3100">
+  <docDscr>
+    <citation>
+      <titlStmt>
+        <titl>
+          <![CDATA[  
+HUTCHINSONDROUGHTINDEX_github repo
+          ]]> 
+        </titl>
+        <IDNo>
+          <![CDATA[  
+hutchinsondroughtindex_3100
+          ]]> 
+        </IDNo>
+      </titlStmt>
+      <prodStmt>
+        <producer>
+          <![CDATA[  
+NA
+          ]]>
+        </producer>
+        <copyright>
+          <![CDATA[  
+NA
+          ]]>
+        </copyright>
+        <prodDate date='NA'>'NA'
+        </prodDate>
+        <software></software>
+      </prodStmt>
+      <verStmt>
+        <version></version>
+        <notes></notes>
+      </verStmt>
+      <biblCit>
+          <![CDATA[  
+NA
+          ]]>
+      </biblCit>
+    </citation>
+    <notes></notes>
+  </docDscr>
+  <stdyDscr >
+    <citation >
+      <titlStmt>
+        <titl>
+          <![CDATA[  
+HUTCHINSONDROUGHTINDEX_github repo
+          ]]>
+        </titl>
+        <IDNo>
+          <![CDATA[  
+hutchinsondroughtindex_3100
+          ]]>
+        </IDNo>
+      </titlStmt>
+      <rspStmt>
+        <AuthEnty>
+          <![CDATA[  
+Ivan Hanigan
+          ]]>
+        </AuthEnty>
+        <othId></othId>
+      </rspStmt>
+      <prodStmt>
+        <producer></producer>
+        <copyright>
+          <![CDATA[  
+NA
+          ]]>
+        </copyright>
+        <prodDate>
+          <![CDATA[  
+NA
+          ]]>
+        </prodDate>
+        <fundAg>
+          <![CDATA[  
+NA
+          ]]>          
+        </fundAg>
+      </prodStmt>
+      <distStmt>
+        <distrbtr>
+          <![CDATA[  
+NA
+          ]]>  
+        </distrbtr>
+        <contact>
+          <![CDATA[  
+NA
+          ]]>  
+        </contact>
+        <distDate></distDate>
+      </distStmt>
+      <serStmt>
+        <serName>
+          <![CDATA[  
+NA
+          ]]>  
+        </serName>
+      </serStmt>
+      <verStmt>
+        <version>
+          <![CDATA[  
+NA
+          ]]>  
+        </version>
+        <notes></notes>
+      </verStmt>
+      <biblCit>
+        <![CDATA[  
+
+          ]]>  
+      </biblCit>
+    </citation >
+    <stdyInfo>
+    <subject>
+<keyword>
+  <![CDATA[  
+    HUTCHINSONDROUGHTINDEX
+  ]]>
+</keyword>
+      <topcClas>
+          <![CDATA[ 
+NCEPH Restricted 
+          ]]> 
+        </topcClas>
+        <topcClas>
+          <![CDATA[  
+Hutchinson Drought Index
+          ]]> 
+        </topcClas>
+      </subject>
+    <abstract>
+       <![CDATA[
+
+
+STUDY TITLE:
+Hutchinson Drought Index
+
+FILE DESCRIPTION:
+Script
+NA
+Test of github
+https://github.com/ivanhanigan/HutchinsonDroughtIndex
+METADATA DOCUMENTS:
+ http://alliance.anu.edu.au/access/content/group/bf77d6fc-d1e1-401c-806a-25fbe06a82d0/ddiindex-nceph/HUTCHINSONDROUGHTINDEX_3100.html (and xml)
+
+STUDY DESCRIPTION:
+The Hutchinson Drought Index reflects agricultural droughts using only rainfall data
+        ]]>
+      </abstract>
+      <sumDscr>
+        <timePrd>
+          <![CDATA[
+NA           
+          ]]> 
+        </timePrd>
+        <collDate>
+          <![CDATA[
+ NA 
+         ]]>
+        </collDate>
+        <nation></nation>
+        <geogCover>
+          <![CDATA[
+NA        
+ ]]>
+        </geogCover>
+        <geogUnit>
+          <![CDATA[
+NA 
+        ]]> 
+          </geogUnit>
+        <anlyUnit>
+          <![CDATA[
+NA
+         ]]> 
+          </anlyUnit>
+        <universe>
+          <![CDATA[
+NA
+         ]]> 
+        </universe>
+        <dataKind>
+          <![CDATA[
+COMBINED
+]]>
+        </dataKind>
+      </sumDscr>
+      <notes></notes>
+    </stdyInfo>
+    <method>
+      <dataColl>
+      <timeMeth></timeMeth>
+      <dataCollector></dataCollector>
+      <sampProc></sampProc>
+      <collMode></collMode>
+      <sources></sources>
+      <weight></weight>
+      <cleanOps>
+        <![CDATA[
+NA
+        ]]>
+      </cleanOps>
+      </dataColl>
+      <notes></notes>
+    </method>
+    <dataAccs>
+      <setAvail>
+        <collSize></collSize>
+        <fileQnty></fileQnty>
+      </setAvail>
+      <useStmt>
+        <confDec>
+          <![CDATA[
+NA
+          ]]>
+        </confDec>
+        <specPerm>
+          <![CDATA[
+STUDY PERMISSIONS:
+NA
+FILE PERMISSIONS:
+NA
+          ]]>
+        </specPerm>
+        <restrctn></restrctn>
+      </useStmt>
+    </dataAccs>
+    <notes>
+      <![CDATA[
+Test of github 
+      ]]>
+    </notes>
+  </stdyDscr >
+  <fileDscr>
+    <fileTxt>
+    <fileName>
+      <![CDATA[
+hutchinsondroughtindex_github repo
+      ]]>
+    </fileName>
+    <dimensns>
+      <caseQnty></caseQnty>
+      <varQnty></varQnty>
+      <logRecL></logRecL>
+      <recPrCas></recPrCas>
+    </dimensns>
+    <fileType>
+      <![CDATA[
+Script
+      ]]>
+    </fileType>
+      <ProcStat>
+        <![CDATA[
+processing description suppressed
+        ]]>
+      </ProcStat>
+    </fileTxt>
+    <notes>
+      <![CDATA[
+Test of github 
+      ]]>
+    </notes>
+  </fileDscr>
+  <dataDscr>
+    <varGrp></varGrp>
+    <labl></labl>
+    <notes></notes>
+ <var ID='V1' name ='github repo'>
+<location></location>
+<labl>
+  <![CDATA[
+Test of github
+  ]]>
+</labl>
+<qstn></qstn>
+<qstnLit></qstnLit>
+<invalrng></invalrng>
+<range></range>
+<item></item>
+<notes></notes>
+<universe></universe>
+<sumStat></sumStat>
+<txt></txt>
+<catgryGrp></catgryGrp>
+<labl></labl>
+<catStat></catStat>
+<catgry></catgry>
+<catValu></catValu>
+<labl></labl>
+<txt></txt>
+<catStat></catStat>
+<concept></concept>
+<derivation></derivation>
+<drvdesc></drvdesc>
+<varFormat></varFormat>
+<notes>
+  <![CDATA[
+Test of github
+  ]]>
+</notes>
+</var>
+  </dataDscr>
+</codeBook>
+
