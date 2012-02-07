@@ -75,16 +75,25 @@
   data<-dataout_final[order(dataout_final$date),]
   
   # now calculate the indices
+  # newnode COUNTS
   data$count<-as.numeric(0)
+  # OLD and SLOW
+  # for(j in 2:nrow(data)){
+  	# data$count[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
+  	# ifelse(data$indexBelowThreshold[j-1]!=0,1+data$count[j-1],
+  	# 1)
+  	# )
+  	# }
+	
+  # NEW and FAST
+  # counts can be done with this funky bit of code 
+  x<-data$index<=-1
+  xx <- (cumsum(!x) + 1) * x 
+  x2<-(seq_along(x) - match(xx, xx) + 1) * x 
+  data$count<-x2
   
-  for(j in 2:nrow(data)){
-  	data$count[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
-  	ifelse(data$indexBelowThreshold[j-1]!=0,1+data$count[j-1],
-  	1)
-  	)
-  	}
-  
-  # enhanced drought revocation threshold
+  # OLD and SLOW enhanced drought revocation threshold 
+  # TASK make NEW and FAST
   # In the enhanced version rather than stop counting when the rescaled percentiles rise above -1.0, 
   # we keep counting the months (or adding the negative anomalies) 
   # if the rescaled percentile is below 0.0 AND the drought threshold has already been reached. 
@@ -103,18 +112,25 @@
   	data$count2[j]
   	}
   }
-  
-  
+  ############################################################
+  # newnode SUMS
+  # NEW and FAST
   data$sums<-as.numeric(0)
-  
-  for(j in 2:nrow(data)){
-  	data$sums[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
-  	ifelse(data$indexBelowThreshold[j-1]!=0,
-  	data$indexBelowThreshold[j]+data$sums[j-1],
-  	data$indexBelowThreshold[j]))
-  	}
+  y <- ifelse(data$index >= -1, 0, data$index)
+  f <- data$index < -1
+  f <- (cumsum(!f) + 1) * f 
+  z <- unsplit(lapply(split(y,f),cumsum),f)
+  data$sums <- z
+  # OLD and SLOW
+  # for(j in 2:nrow(data)){
+  	# data$sums[j]<-ifelse(data$indexBelowThreshold[j]==0,0,
+  	# ifelse(data$indexBelowThreshold[j-1]!=0,
+  	# data$indexBelowThreshold[j]+data$sums[j-1],
+  	# data$indexBelowThreshold[j]))
+  	# }
   	
-  
+  # OLD and SLOW
+  # TASK make NEW and FAST
   data$sums2<-data$sums
   # j=1069 # 1980-06
   # data[j,]
