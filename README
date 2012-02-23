@@ -13,9 +13,6 @@ Casual readers will probably want to go straight to
 Readers wishing to reproduce the data analysis can do so by running the 'go.r' script
 (see the Specification.txt file for explanations of the structure of the code).
 
-Ivan Hanigan
-2012-02-24
-
 Copyright is the GNU General Public License version 2 WITHOUT ANY WARRANTY,
 Ivan C Hanigan <ivan.hanigan@gmail.com> and Michael F Hutchinson.
 
@@ -29,3 +26,6 @@ Please cite the original 1992 paper as well as this web repository as:
 
 Financial support was provided by Professor Anthony McMichael from the 
 National Centre for Epidemiology and Population Health, Australian National University.  
+
+Ivan Hanigan
+2012-02-24
