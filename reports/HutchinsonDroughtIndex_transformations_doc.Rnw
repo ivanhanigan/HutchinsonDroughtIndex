@@ -2,6 +2,7 @@
 \usepackage{cite} 
 \usepackage{hyperref} 
 \usepackage{longtable} 
+\usepackage{verbatim} 
 \usepackage{rotating}
 \begin{document}
 \title{HUTCHINSONDROUGHTINDEX} 
@@ -43,6 +44,8 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
  if (!require(geosphere)) install.packages('geosphere'); require(geosphere)
  if (!require(plyr)) install.packages('plyr'); require(plyr)
 
+ # the drought index
+ source('run/HutchinsonDroughtIndex_tools_droughtIndex.r')
 
  
 @
@@ -73,7 +76,7 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
 
 <<eval=FALSE,echo=TRUE,keep.source=TRUE>>=	
 ######################
-#tools,  droughtIndex
+#tools_droughtIndex,  droughtIndex
 ######################
       
 
@@ -86,7 +89,23 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
  
   # Ivan C Hanigan
   # June 2011.
-  # GPL2
+  
+  ################################################################################
+  ## Copyright 2011, Ivan C Hanigan <ivan.hanigan@gmail.com> and Michael F Hutchinson
+  ## This program is free software; you can redistribute it and/or modify
+  ## it under the terms of the GNU General Public License as published by
+  ## the Free Software Foundation; either version 2 of the License, or
+  ## (at your option) any later version.
+  ## 
+  ## This program is distributed in the hope that it will be useful,
+  ## but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ## GNU General Public License for more details.
+  ## Free Software
+  ## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+  ## 02110-1301, USA
+  ################################################################################
+
 
   # my input data are always a data.frame with 4 columns 'date','year','month','rain'
    
@@ -94,6 +113,7 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
   # started with 6 (current and prior months)
   x<-ts(data[,4],start=1,end=c(years,12),frequency=12)
   x<-c(rep(NA,5),x+lag(x,1)+lag(x,2)+lag(x,3)+lag(x,4)+lag(x,5))
+  # TASK need to use rollapply?
   data$sixmnthtot<-x
   data<-na.omit(data)
   
@@ -141,7 +161,7 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
   data$count<-x2
   
   # OLD and SLOW enhanced drought revocation threshold 
-  # TASK make NEW and FAST
+  # TASK make NEW and FAST? or add as an option?
   # In the enhanced version rather than stop counting when the rescaled percentiles rise above -1.0, 
   # we keep counting the months (or adding the negative anomalies) 
   # if the rescaled percentile is below 0.0 AND the drought threshold has already been reached. 
@@ -178,7 +198,7 @@ The R code includes a demonstration of the Hutchinson Drought Index \cite{Smith1
   	# }
   	
   # OLD and SLOW
-  # TASK make NEW and FAST
+  # TASK make NEW and FAST? or add as an option?
   data$sums2<-data$sums
   # j=1069 # 1980-06
   # data[j,]
