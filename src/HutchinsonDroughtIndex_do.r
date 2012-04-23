@@ -32,5 +32,5 @@
 # newnode replicate Fig3.5 from Hutchinson
 	
  setwd(rootdir)
- source('run/HutchinsonDroughtIndex_load_vic.r')
+ source('src/HutchinsonDroughtIndex_load_vic.r')
  

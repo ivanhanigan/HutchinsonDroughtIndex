@@ -622,7 +622,7 @@ Figure 3.5 from the original paper shows the index at Seymour Victoria 1966-1986
       
 
  setwd(rootdir)
- source('run/HutchinsonDroughtIndex_load_vic.r')
+ source('src/HutchinsonDroughtIndex_load_vic.r')
  
 @
 
