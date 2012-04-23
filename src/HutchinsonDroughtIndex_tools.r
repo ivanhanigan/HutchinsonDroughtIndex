@@ -7,7 +7,7 @@
  if (!require(plyr)) install.packages('plyr'); require(plyr)
 
  # the drought index
- source('run/HutchinsonDroughtIndex_tools_droughtIndex.r')
+ source('src/HutchinsonDroughtIndex_tools_droughtIndex.r')
 
  
 ###############################################################################

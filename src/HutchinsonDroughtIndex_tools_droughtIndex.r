@@ -10,7 +10,7 @@
  
   # Ivan C Hanigan
   # June 2011.
-  
+    
   ################################################################################
   ## Copyright 2011, Ivan C Hanigan <ivan.hanigan@gmail.com> and Michael F Hutchinson
   ## This program is free software; you can redistribute it and/or modify
@@ -103,7 +103,7 @@
   }
   ############################################################
   # newnode SUMS
-  # NEW and FAST
+  # NEW and FAST? or add as an option?
   data$sums<-as.numeric(0)
   y <- ifelse(data$index >= -1, 0, data$index)
   f <- data$index < -1
@@ -119,7 +119,7 @@
   	# }
   	
   # OLD and SLOW
-  # TASK make NEW and FAST? or add as an option?
+  # TASK make NEW and FAST
   data$sums2<-data$sums
   # j=1069 # 1980-06
   # data[j,]

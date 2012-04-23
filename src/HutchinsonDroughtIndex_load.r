@@ -1,11 +1,4 @@
 ###############################################################################
-# newnode create working dir
-	
- outdir <- '~/data/drought/HutchinsonDroughtIndex'
- dir.create(outdir, recursive = T)
- setwd(outdir)
- 
-###############################################################################
 # newnode create download directories
 	
  

@@ -1,8 +1,8 @@
 ###############################################################################
 # newnode go
 	
- source('run/HutchinsonDroughtIndex_tools.r')
- source('run/HutchinsonDroughtIndex_load.r')
- source('run/HutchinsonDroughtIndex_do.r')
- source('run/HutchinsonDroughtIndex_check.r')
+ source('src/HutchinsonDroughtIndex_tools.r')
+ source('src/HutchinsonDroughtIndex_load.r')
+ source('src/HutchinsonDroughtIndex_do.r')
+ source('src/HutchinsonDroughtIndex_check.r')
  
