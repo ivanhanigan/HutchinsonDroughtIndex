@@ -27,7 +27,7 @@
    # system(sprintf('sh getZipContents.sh IDCJAC0001_%s.zip',site))
    #unzip(sprintf('IDCJAC0001_%s.zip',site),junkpaths=T)  
   
-   unzip(sprintf('prcphq.%s.month.txt.Z',site),junkpaths=T) 
+   system(sprintf('uncompress prcphq.%s.month.txt.Z',site)) 
    setwd(wd)
   }
 
