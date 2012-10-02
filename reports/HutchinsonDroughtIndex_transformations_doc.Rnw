@@ -5,6 +5,7 @@
 \usepackage{verbatim} 
 \usepackage{rotating}
 \begin{document}
+
 \title{HUTCHINSONDROUGHTINDEX} 
 \author{Ivan C. Hanigan$^{1}$}
 \date{\today}                 

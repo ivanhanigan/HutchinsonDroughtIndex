@@ -1,4 +1,6 @@
 ###############################################################################
+# NB hand edit to 83032 to remove apostrophe from name Burder's Lane
+###############################################################################
 # newnode get stations within Vitoria study region
 	
  
@@ -29,11 +31,11 @@
   # i <- 1
   filename <- paste('0',as.character(d@data[i,1]),sep='')
   if(!file.exists(paste('IDCJAC0001_', filename,'_Data1.csv',sep=''))){ 
-   dlMonthly(filename, getwd())
+   dlMonthly(filename, 'HQ_monthly_prcp_txt')
    }
   df <- read.csv(paste('IDCJAC0001_', filename,'_Data1.csv',sep=''))
   df$date <- as.Date(paste(df$Year,df$Month,1,sep='-'))
-  df<-subset(df,Quality == 'Y',select=c(date,Year,Month,Monthly.Precipitation.Total..millimetres.))
+  #df<-subset(df,Quality == 'Y',select=c(date,Year,Month,Monthly.Precipitation.Total..millimetres.))
   head(df)
   fulldaterange <- as.data.frame(seq(min(df$date),max(df$date),1))
   fulldaterange$day <- substring(fulldaterange[,1],9,10)
