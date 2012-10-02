@@ -169,8 +169,9 @@
  for(i in 1:nrow(d@data)){
   # i <- 1
   filename <- paste('0',as.character(d@data[i,1]),sep='')
+  # filename <- d@data[i,1]
   if(!file.exists(paste('IDCJAC0001_', filename,'_Data1.csv',sep=''))){ 
-   dlMonthly(filename, getwd())
+   dlMonthly(filename, 'HQ_monthly_prcp_txt')
    }
   df <- read.csv(paste('IDCJAC0001_', filename,'_Data1.csv',sep=''))
   df$date <- as.Date(paste(df$Year,df$Month,1,sep='-'))
