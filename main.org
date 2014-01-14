@@ -84,11 +84,11 @@ exportPattern("^[[:alpha:]]+")
 #+end_src
 
 * Functions
-** droughtIndex
-*** R-droughtIndex
-#+name:droughtIndex
-#+begin_src R :session *R* :tangle R/droughtIndex.r :exports none :eval no
-  droughtIndex<-function(data,years,droughtThreshold=.375){
+** drought_index_stations
+*** R-drought_index_stations
+#+name:drought_index_stations
+#+begin_src R :session *R* :tangle R/drought_index_stations.r :exports none :eval no
+  drought_index_stations<-function(data,years,droughtThreshold=.375){
   # a drought index based on integrated six-monthly rainfall percentiles.
   # based on Professor Mike Hutchinson's work described in 
   # Smith D, Hutchinson M, McArthur R. Climatic and Agricultural Drought: Payments and Policy. 
@@ -228,18 +228,121 @@ exportPattern("^[[:alpha:]]+")
   
   
 #+end_src
-*** test-droughtIndex
-#+name:droughtIndex
-#+begin_src R :session *R* :tangle tests/test-droughtIndex.r :exports none :eval no
-################################################################
-# name:droughtIndex
-
+*** test-drought_index_stations
+#+name:drought_index_stations
+#+begin_src R :session *R* :tangle tests/test-drought_index_stations.r :exports none :eval no
+  ################################################################
+  # name:drought_index_stations
+  analyte <- read.table("~/data/HutchinsonDroughtIndex/inst/extdata/prcphq.046037.month.txt", quote="\"", skip = 1, nrows = 1440)
+  
+  # clean
+  str(analyte)
+  head(analyte);tail(analyte)
+  
+  analyte <- data.frame(analyte[,1], substr(analyte[,1], 1,4) , substr(analyte[,1],5,6), analyte[,3])
+  names(analyte) <- c('date',  'year' , 'month' ,'rain')
+  str(analyte)
+  analyte$year <- as.numeric(as.character(analyte$year))
+  analyte$month <- as.numeric(as.character(analyte$month))
+  str(analyte)
+  subset(data.frame(table(na.omit(analyte)[,"year"])), Freq < 12)
+  # are all months present?
+  
+  # do
+  drt <- drought_index_stations(data=analyte,years=length(names(table(analyte$year))),droughtThreshold=.375)
+  
+  # report
+  summary(drt)
+  with(drt, plot(as.Date(date), count, "l"))
+  abline(5,0)
+  par(new=T)
+  with(drt, plot(as.Date(date), -1*sums, col= "red", type="l"))
+  
 #+end_src
-*** man-droughtIndex
-#+name:droughtIndex
+*** man-drought_index_stations
+#+name:drought_index_stations
 #+begin_src R :session *R* :tangle no :exports none :eval no
 ################################################################
-# name:droughtIndex
+# name:drought_index_stations
+
+#+end_src
+
+** drought_index_grids
+*** R-drought_index_grids
+#+name:drought_index_grids
+#+begin_src R :session *R* :tangle R/drought_index_grids.r :exports none :eval no
+  ################################################################
+  # name:drought_index_grids
+
+  ## TODO-list: 
+  # count2 and sums, convert matrices to bricks.
+  # set it up to work on subsets of the grid and put them back together after
+
+  drought_index_grids <- function(rasterbrick,startyear,endyear,droughtThreshold=.375){
+      
+    b<-getValuesBlock(rasterbrick, row=500, nrows=5, col=500, ncols=5)
+    # TODO estimate the max and min date from the data filenames
+    x<-apply(b, 1, function(x) ts(x,start=c(startyear, 01),end=c(endyear,12),frequency=12))
+    sixmnthtot<-apply(x, 2, function(x) c(rep(NA,5),x+lag(x,1)+lag(x,2)+lag(x,3)+lag(x,4)+lag(x,5)))
+    # TODO it might be faster to use zoo::rollapply,
+    # and also we can make the lag length variable
+     
+    ##rank
+    # TODO select for each month ie all Januarys are ranked seperate from Febs etc
+    rank <- apply(x, 2, function(x) {return((rank(x)-1)/(length(x)-1))})
+    index <- apply(rank, 2, function(x) 8*(x-.5)) #to be a brick
+    # .375 is refering to palmer's benchmark but we could let the user vary this
+    drought <- apply(x, 2, function(x) x<=quantile(x,droughtThreshold)) 
+    indexBelowThreshold <- index*drought #to be a  brick
+     
+    ##count
+    x1 <- index<=-1
+    x2 <- apply(x1, 2, function(x) (cumsum(!x) + 1) * x )
+    seq <- apply(x1, 2, function(x) seq_along(x))
+    match <- apply(x2, 2, function(x) match(x,x))
+    count<- (seq - match + 1) * x1 #double check #to be a brick
+    return(count)
+  }
+  
+#+end_src
+*** test-drought_index_grids
+#+name:drought_index_grids
+#+begin_src R :session *R* :tangle tests/test-drought_index_grids.r :exports none :eval no
+################################################################
+# name:drought_index_grids
+getwd()
+##Lu 13-14 Jan 2014
+require(raster); require(rgdal)
+##path?
+awap.grids = dir(pattern = "grid$", full.names=T) 
+#  list.files('AWAP_GRIDS', pattern=glob2rx('totals*.grid'), full.names=T)
+for(i in 1:12){
+  #i = 1
+  #file.copy(awap.grids[i], sprintf("foo%s.grid", i))}
+  r <- raster(awap.grids[i])
+  #str(r)
+  #image(r)
+  fname <- gsub(".grid",".tif", awap.grids[i])
+  # TODO project this please lu!
+  writeRaster(r, filename= fname, type = "GTiff")
+  #file.remove(awap.grids[i])
+}
+## for some reason brick or stack only don't work, both together do
+awap.grids <- dir(pattern = 'tif')
+rasterbrick <- brick(stack(awap.grids)) #takes too l
+
+## I'm not sure what's more efficient, if changing the drought function 
+## to do the cal on matrices or just running the function on the vectors
+
+##option 1 modif function
+ct <- drought_index_grids(rasterbrick = rb,startyear = 1900, endyear=1900, droughtThreshold=.375)
+plot(ct[,1], type = "l")
+#+end_src
+*** man-drought_index_grids
+#+name:drought_index_grids
+#+begin_src R :session *R* :tangle no :exports none :eval no
+################################################################
+# name:drought_index_grids
 
 #+end_src
 

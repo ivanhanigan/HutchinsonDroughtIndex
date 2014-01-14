@@ -1,6 +1,6 @@
 
 ################################################################
-# name:droughtIndex
+# name:drought_index_stations
 analyte <- read.table("~/data/HutchinsonDroughtIndex/inst/extdata/prcphq.046037.month.txt", quote="\"", skip = 1, nrows = 1440)
 
 # clean
@@ -17,7 +17,7 @@ subset(data.frame(table(na.omit(analyte)[,"year"])), Freq < 12)
 # are all months present?
 
 # do
-drt <- droughtIndex(data=analyte,years=length(names(table(analyte$year))),droughtThreshold=.375)
+drt <- drought_index_stations(data=analyte,years=length(names(table(analyte$year))),droughtThreshold=.375)
 
 # report
 summary(drt)
