@@ -1,0 +1,16 @@
+\documentclass{article}
+%\VignetteIndexEntry{HutchinsonDroughtIndex}
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\begin{center}
+\Large
+{\tt HutchinsonDroughtIndex} Package Vignette
+\normalsize
+\end{center}
+The following figure illustrates a sequence of numbers.
+<<keep.source=TRUE>>=
+library('HutchinsonDroughtIndex')
+x <- rnorm(100,1,2)
+x
+@
+\end{document}

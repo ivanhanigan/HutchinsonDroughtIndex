@@ -1,0 +1,10 @@
+Package: HutchinsonDroughtIndex
+Type: Package
+Title: Hutchinson's Drought Index  
+Version: 1.0
+Date: 2014-01-14
+Author: ivanhanigan, lucianaporforio, Michael Hutchinson
+Maintainer: <ivan.hanigan@gmail.com>
+Depends: raster, rgdal, zoo
+Description: drought function
+License: GPL (>= 2)
