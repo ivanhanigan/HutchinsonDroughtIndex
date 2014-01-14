@@ -1,7 +1,7 @@
 
 ################################################################
 # name:drought_index_grids
-if(!require(devtools)) install.packages(devtools, depend = T); require(devtools)
+if(!require(devtools)) install.packages("devtools", depend = T); require(devtools)
 install_github("HutchinsonDroughtIndex", "ivanhanigan")
 
 wd <- getwd()
