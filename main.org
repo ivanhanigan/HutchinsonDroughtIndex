@@ -77,6 +77,11 @@ Maintainer: Who to complain to <ivan.hanigan@gmail.com>
 
 #+end_src
 
+** NAMESPACE
+#+name:NAMESPACE
+#+begin_src txt :tangle NAMESPACE :exports reports :eval no :padline
+exportPattern("^[[:alpha:]]+")
+#+end_src
 
 * Functions
 ** droughtIndex
