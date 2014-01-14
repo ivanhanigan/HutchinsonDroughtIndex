@@ -3,6 +3,8 @@ The Hutchinson Drought Index
 The Hutchinson Drought Index (or Drought Severity Index) is a climatic drought index 
 that was designed to reflect agricultural droughts using only rainfall data.
 
+This project includes an R package in the master branch and the documentation on the gh-pages branch.
+
 The index was invented by Professor Mike Hutchinson at the ANU in 1992 and 
 this project includes R codes written by Ivan Hanigan to describe the calculations 
 and also to download data to play with.
@@ -40,6 +42,3 @@ The citations for the datasets used in this demonstration are:
 
 Ivan Hanigan
 2012-02-24
-
-Hacked by Steve
-2013-11-19
