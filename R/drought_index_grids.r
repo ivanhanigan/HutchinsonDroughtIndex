@@ -3,24 +3,30 @@
 # name:drought_index_grids
 
 ## TODO-list: 
-# count2 and sums, convert matrices to bricks.
-# set it up to work on subsets of the grid and put them back together after
+## Check equations
+## remove items to free memory
+##  a version of the function to use tiles (if memory RAM is a limitation)???
+
+
+## Lu's comments
+## Lu 13-16 Jan 2014 I realised that we don't need to use a 2D matrix 
+## as we already have all info in the 3D matrix (the rasterrick)!!!
+## so the apply functions are replaced by calc and overlay from raster package
+## outputs are then a raster object
+
 
 drought_index_grids <- function(rasterbrick,startyear,endyear,droughtThreshold=.375){
     
-  ## Lu 13-14 Jan 2014
-  ## Lu 15-16 Jan 2014 I realised that we don't need to use a 2D matrix 
-  ## as we already have all info in the 3D matrix (the brick)!!!
-  ## so the apply functions are replaced by calc from raster package
-  ## outputs are then a raster object
-  ## TODO  remove objetcts after used
+
+  if(!require(raster)) install.packages('raster'); require(raster)
+  if(!require(rgdal)) install.packages('rgdal'); require(rgdal)
+  if(!require(zoo)) install.packages('zoo'); require(zoo)
   
-  require(raster); require(rgdal)
   ####The 1st section will be repalce by AWAP_GRIDS-monthly.r that gets drids from BoM website
   #the load_month didn't work on my PC
   
   #i'm using the flt images Matt gave me 1900-2013
-#   path = c('D:/work/awap_rain_mth_1990-2013/rain')
+   path = c('D:/work/awap_rain_mth_1990-2013/rain')
 #   awap.grids = dir(path, pattern = "flt$", full.names=T, recursive=T) 
 #   
 #   #re-save them as tiff to use less memory
@@ -35,9 +41,9 @@ drought_index_grids <- function(rasterbrick,startyear,endyear,droughtThreshold=.
   #for some reason brick or stack only don't work, both together do
 #   
 #   awap.grids <- dir(path, pattern = "tif$", full.names=T, recursive=T) 
-#   
+# #   
 #   ptm <- proc.time()
-#   rasterbrick <- brick(stack(awap.grids[1:12]))
+#   rasterbrick <- brick(stack(awap.grids))
 #   projection(rasterbrick)<-"+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 #   proc.time() - ptm
   ## timing for ALL years
@@ -69,9 +75,21 @@ drought_index_grids <- function(rasterbrick,startyear,endyear,droughtThreshold=.
   # # TODO estimate the max and min date from the data filenames
   # x<-apply(b, 1, function(x) ts(x,start=c(1900, 01),end=c(2013,12),frequency=12))
   ############################################################
+  
+  ## TODO check this
+  ## limitation: this won't work if the date has a diff name though 
+  ## It'll look better if start and end year and month are arguments in the function << I vote for this
+  
+#   start.year = substr(names(rasterbrick@data@names[1]),16,17,18,19) 
+#   start.month = substr(names(rasterbrick@data@names[1]),20,21)
+#   end.year = substr(names(xx[rasterbrick@data@names[length(names(rasterbrick))]],16,17,18,19)
+#   end.month = substr(names(xx[rasterbrick@data@names[length(names(rasterbrick))]],20,21)
+                    
   ptm <- proc.time()
-  xx= calc(rasterbrick, fun=function(x) ts(x,start=c(1900, 01),end=c(1900,12),frequency=12))
+  xx= calc(rasterbrick, fun=function(x) ts(x,start=c(1900, 01),end=c(2013,12),frequency=12))
   proc.time() - ptm
+  
+ 
   
   # this can be used to modify the original function
   #sixmnthtot<-apply(x, 2, function(x) c(rep(NA,5),x+lag(x,1)+lag(x,2)+lag(x,3)+lag(x,4)+lag(x,5)))
@@ -92,7 +110,7 @@ drought_index_grids <- function(rasterbrick,startyear,endyear,droughtThreshold=.
   # TODO select for each month ie all Januarys are ranked seperate from Febs etc
   #rank <- apply(x, 2, function(x) {return((rank(x)-1)/(length(x)-1))})
   #get months from raster names
-  months <- substr(names(xx),20,21)
+  months <- substr(names(rasterbrick),20,21)
   tw <-c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12")
   
   #actually I'm not sure this is correct...
@@ -164,6 +182,11 @@ drought_index_grids <- function(rasterbrick,startyear,endyear,droughtThreshold=.
   plot(xx.count2@data@values[750, 1:12], type = "l", col='blue', ylim=c(0,10))
   abline(5,0)
   
+  ##save output
+#   ptm <- proc.time()
+#   writeRaster(xx.count2, filename='count2_dummy_19000101-20131201.tif', format="GTiff", overwrite=T)
+#   proc.time()-ptm
+#   
   ############################################################
   ##SUMS
   
@@ -176,4 +199,12 @@ drought_index_grids <- function(rasterbrick,startyear,endyear,droughtThreshold=.
   #check warning msje
   xx.sum2 <- overlay(xx.sum, xx.index, fun=function(x,j) if(x<= -17.5 & j <= 0){
     sum(x,j)}else{x})
+  
+  plot(xx.sum2@data@values[750, 1:12], type = "l", col='blue', ylim=c(0,10))
+  abline(5,0)
+## save output
+      #writeRaster(xx.sum2, filename='sum2_dummy_19000101-20131201.tif', format="GTiff", overwrite=T)
+    
+  
+  
 }
