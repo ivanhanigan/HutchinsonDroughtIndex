@@ -15,7 +15,7 @@
 ## outputs are then a raster object
 
 
-drought_index_grids <- function(rasterbrick,startyear,endyear,droughtThreshold=.375){
+drought_index_grids <- function(rasterbrick,startyear,endyear,droughtThreshold=.375, path=NA){
     
 
   if(!require(raster)) install.packages('raster'); require(raster)
@@ -26,7 +26,8 @@ drought_index_grids <- function(rasterbrick,startyear,endyear,droughtThreshold=.
   #the load_month didn't work on my PC
   
   #i'm using the flt images Matt gave me 1900-2013
-   path = c('D:/work/awap_rain_mth_1990-2013/rain')
+#    path = c('D:/work/awap_rain_mth_1990-2013/rain')
+if(is.na(path)) stop("please provide path to raster files")
 #   awap.grids = dir(path, pattern = "flt$", full.names=T, recursive=T) 
 #   
 #   #re-save them as tiff to use less memory
