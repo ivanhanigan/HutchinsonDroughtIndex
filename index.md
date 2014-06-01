@@ -5,7 +5,7 @@ title: Hutchinson Drought Index
 ---
 
 <!--![plot](/images/hist_x.png)-->
-![plot](/hutchinson-drought-index/images/McMichaelDDRMHconf2008.jpg)
+![plot](/HutchinsonDroughtIndex/images/McMichaelDDRMHconf2008.jpg)
 
 ### Demonstration
 
