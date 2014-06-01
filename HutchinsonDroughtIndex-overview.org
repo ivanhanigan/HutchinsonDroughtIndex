@@ -1,0 +1,11 @@
+#+TITLE:HutchinsonDroughtIndex overview org 
+#+AUTHOR: Ivan Hanigan
+#+email: ivan.hanigan@anu.edu.au
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [a4paper]
+#+LATEX: \tableofcontents
+-----
+
+* TODO-list
+
+** TODO add gh-pages
