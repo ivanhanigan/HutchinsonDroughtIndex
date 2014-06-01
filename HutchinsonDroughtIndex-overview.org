@@ -8,4 +8,9 @@
 
 * TODO-list
 
-** TODO add gh-pages
+** DONE add gh-pages
+
+** TODO identify key components for web page
+
+** TODO publish station data set to AEKOS
+

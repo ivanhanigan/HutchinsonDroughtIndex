@@ -7,7 +7,7 @@ title: Hutchinson Drought Index
 <p> Feel free to contact me <em>ivan dot hanigan at gmail dot com</em></p>
 
 ![plot](/images/McMichaelDDRMHconf2008.jpg)
-<!--![plot](/random-website/images/hist_x.
+<!--![plot](/random-website/images/hist_x.-->
 
 Tools
 ---
