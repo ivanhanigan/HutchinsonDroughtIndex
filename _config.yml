@@ -1,0 +1,7 @@
+name: Hutchinson Drought Index
+description: An exploration of using R for Drought science.
+url: http://ivanhanigan.github.com/HutchinsonDroughtIndex
+paginate: 5
+pygments: true
+markdown: rdiscount
+permalink: /:year/:month/:title/
