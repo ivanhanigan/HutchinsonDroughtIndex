@@ -52,8 +52,9 @@
   
 #+end_src
 *** COMMENT kwrt_weather_drought_1888_2014_p141.Rmd
-#+name:asdf
-#+begin_src R :session *shell* :tangle reports/kwrt_weather_drought_1888_2014_p141.Rmd :exports none :eval no
+[[./reports/kwrt_weather_drought_1888_2014_p141.Rmd]]
+**** old 
+#+begin_src R :session *shell* :tangle no :exports none :eval no
   ---
   title: "kwrt weather drought 1888 2014 p141"
   author: Ivan C. Hanigan
