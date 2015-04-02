@@ -1,4 +1,3 @@
-
 ---
 title: "kwrt weather drought 1888 2014 p141"
 author: Ivan C. Hanigan
@@ -22,14 +21,16 @@ classoption: a4paper
 ```{r echo = F, eval=F, results="hide"}
 # func
 setwd("~/data/HutchinsonDroughtIndex/reports/")
-library(rmarkdown)
+#library(rmarkdown)
 library(knitr)
 library(knitcitations)
 cleanbib()
 options("cite_format"="pandoc")
-rmarkdown::render("kwrt_weather_drought_1888_2014_p141.Rmd", "all")
-# browseURL("hanigan-synthesis.html")
-system("pandoc -V papersize:'a4paper' -i hanigan-synthesis.html -o hanigan-synthesis.docx")
+#rmarkdown::render("kwrt_weather_drought_1888_2014_p141.Rmd", "all")
+require(markdown)
+knit2html("kwrt_weather_drought_1888_2014_p141.Rmd", options = c("toc", markdown::markdownHTMLOptions(TRUE)), stylesheet = "custom.css")
+browseURL("kwrt_weather_drought_1888_2014_p141.html")
+#system("pandoc -V papersize:'a4paper' -i hanigan-synthesis.html -o hanigan-synthesis.docx")
 ```
 ```{r, echo = F, results = 'hide'}
 # load
@@ -123,7 +124,9 @@ tail(df5)
 drt <- drought_index_stations(data=df5,years=length(names(table(df5$year))))
 
 qc3=drt[drt$year>=1979 & drt$year < 1984,]
+
 write.csv(drt, file.path('data/ad_hoc','ProspectReservoir06719Drought8283.csv'), row.names = F)
+
  png(file.path('data/ad_hoc','ProspectReservoir06719Drought8283.png'),res=200,width = 2100, height = 1000)
  par(mfrow=c(4,1),mar=c(2.5,2,1.5,1))
  plot(qc3$date,qc3$rain,type='l',main='Prospect Reservoir (67019) NSW: raw monthly rainfall')
@@ -220,6 +223,7 @@ if(!require(raster)) install.packages('raster'); library(raster)
 library(sqldf)
 library(disentangle)
 homedir <- "~/data/HutchinsonDroughtIndex/reports"
+dir(homedir)
 outdir <- "~/data/AWAP_GRIDS_RAIN_MONTHLY"
 setwd(outdir)
 
@@ -230,7 +234,10 @@ shp <- SpatialPointsDataFrame(cbind(locn$lon,locn$lat),locn,
 shp@data 
 ##        lon       lat
 ## 1 150.8929 -33.82107
-
+wd <- getwd()
+setwd(homedir)
+writeOGR(shp, 'prospect.shp', 'prospect', driver='ESRI Shapefile')
+setwd(wd)
 cfiles <-  dir(pattern="tif$")
 cfiles[1:10]
 tail(cfiles)
@@ -577,6 +584,6 @@ The end
 
 ## References
 
-```{r, results = 'asis', echo = FALSE}
+```{r, results = 'asis', echo = FALSE, eval = F}
 bibliography()
 ```
