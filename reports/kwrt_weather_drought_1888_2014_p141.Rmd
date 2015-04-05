@@ -1,20 +1,20 @@
----
-title: "kwrt weather drought 1888 2014 p141"
-author: Ivan C. Hanigan
-output:
-  html_document:
-    toc: true
-    theme: united
-    number_sections: no    
-  pdf_document:
-    toc: true
-    toc_depth: 3
-    highlight: zenburn
-    keep_tex: true
-    number_sections: no        
-documentclass: article
-classoption: a4paper
----
+<!-- --- -->
+<!-- title: "kwrt weather drought 1888 2014 p141" -->
+<!-- author: Ivan C. Hanigan -->
+<!-- output: -->
+<!--   html_document: -->
+<!--     toc: true -->
+<!--     theme: united -->
+<!--     number_sections: no     -->
+<!--   pdf_document: -->
+<!--     toc: true -->
+<!--     toc_depth: 3 -->
+<!--     highlight: zenburn -->
+<!--     keep_tex: true -->
+<!--     number_sections: no         -->
+<!-- documentclass: article -->
+<!-- classoption: a4paper -->
+<!-- --- -->
 
 
   
@@ -66,11 +66,17 @@ sums.
 
 ## Data Sources
 
+### Bom Station
+- A station from the prospect reservoir
+
+### AWAP
 - The Bureau of Meteorology has generated a range of gridded meteorological datasets for Australia as a contribution to the Australian Water Availability Project (AWAP). These include monthly precipitation from 1900 to the present.
 - [http://www.bom.gov.au/jsp/awap/](http://www.bom.gov.au/jsp/awap/)
 - Documentation is at [http://www.bom.gov.au/amm/docs/2009/jones.pdf](http://www.bom.gov.au/amm/docs/2009/jones.pdf)
+### Emast
 
-## Station
+# Code
+## Bom Station
 
 ```{r, echo = F, eval =F, results = 'hide'}
 #library(devtools)
@@ -573,6 +579,23 @@ dev.off()
 ```
 
 ## Results
+
+### Combine the three time-series
+
+```{r, echo = F, results = 'hide', eval = F}
+indir1 <- 'data/ad_hoc'
+dir(indir1)
+infile1 <- 
+file.path(indir1,'ProspectReservoir06719Drought8283.csv')
+dir(pattern="csv")
+infile2 <- "kwrt_weather_drought_1888_2014_p141_output.csv"            
+infile3 <- "kwrt_weather_drought_1888_2014_p141_output_grids_emast.csv"
+
+dat <- read.csv(infile1)
+
+```
+
+### Compare the results
 
 Shown in Figure Y is the results
 
