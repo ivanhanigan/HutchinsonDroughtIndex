@@ -551,6 +551,9 @@ drt <- drought_index_stations(data=indat,
 head(drt)
 tail(drt)
 str(drt)
+write.csv(drt, "kwrt_weather_drought_1888_2014_p141_output_grids_emast2.csv", row.names=F)
+
+
 qc3 <- drt[drt$year>=1979 & drt$year < 1984,]
 
 png(file.path(homedir,"kwrt_weather_drought_1888_2014_p141_output_emast.png"))
@@ -583,23 +586,138 @@ dev.off()
 ### Combine the three time-series
 
 ```{r, echo = F, results = 'hide', eval = F}
-indir1 <- 'data/ad_hoc'
+library(EML)
+
+indir1 <- '../data/ad_hoc'
 dir(indir1)
 infile1 <- 
 file.path(indir1,'ProspectReservoir06719Drought8283.csv')
-dir(pattern="csv")
-infile2 <- "kwrt_weather_drought_1888_2014_p141_output.csv"            
-infile3 <- "kwrt_weather_drought_1888_2014_p141_output_grids_emast.csv"
+dir("reports",pattern="csv")
+infile2 <- "kwrt_weather_drought_1888_2014_p141_output_awap.csv"            
+infile3 <- "kwrt_weather_drought_1888_2014_p141_output_grids_emast2.csv"
 
 dat <- read.csv(infile1)
+str(dat)
+
+dat_qc <- dat[,c("year", "month","rain")]
+names(dat_qc) <- gsub("rain","rain_bom_stn", names(dat_qc))
+
+dat_out <- dat[,c("year", "month","count2", "sums2")]
+names(dat_out) <- gsub("count2","duration_bom_stn", names(dat_out))
+names(dat_out) <- gsub("sums2","severity_bom_stn", names(dat_out))
+dat_out$duration_bom_stn_declared <- ifelse(dat_out$duration_bom_stn > 4, "TRUE", "FALSE")
+dat_out$severity_bom_stn_declared <- ifelse(dat_out$severity_bom_stn < -17.5, "TRUE", "FALSE")
+
+str(dat_qc)
+str(dat_out)
+
+############################3
+# awap
+#setwd("reports")
+dat <- read.csv(infile2)
+str(dat)
+dat_qc <- merge(dat_qc, dat[,c("year", "month","rain")], by = c("year","month"), all.x = T)
+
+names(dat_qc) <- gsub("rain$","rain_awap", names(dat_qc))
+str(dat_qc)
+head(dat_qc); tail(dat_qc)
+str(dat_out)
+dat_out <- merge(dat_out, dat[,c("year", "month","count2", "sums2")], by =c("year","month"), all.x =T)
+names(dat_out) <- gsub("count2","duration_awap", names(dat_out))
+names(dat_out) <- gsub("sums2","severity_awap", names(dat_out))
+dat_out$duration_awap_declared <- ifelse(dat_out$duration_awap > 4, "TRUE", "FALSE")
+dat_out$severity_awap_declared <- ifelse(dat_out$severity_awap < -17.5, "TRUE", "FALSE")
+
+str(dat_qc)
+str(dat_out)
+
+
+##################################
+# emast
+dat <- read.csv(infile3)
+str(dat)
+head(dat); tail(dat)
+
+dat_qc <- merge(dat_qc, dat[,c("year", "month","rain")], by = c("year","month"), all.x = T)
+
+names(dat_qc) <- gsub("rain$","rain_emast", names(dat_qc))
+str(dat_qc)
+head(dat_qc); tail(dat_qc)
+str(dat_out)
+dat_out <- merge(dat_out, dat[,c("year", "month","count2", "sums2")], by =c("year","month"), all.x =T)
+names(dat_out) <- gsub("count2","duration_emast", names(dat_out))
+names(dat_out) <- gsub("sums2","severity_emast", names(dat_out))
+dat_out$duration_emast_declared <- ifelse(dat_out$duration_emast > 4, "TRUE", "FALSE")
+dat_out$severity_emast_declared <- ifelse(dat_out$severity_emast < -17.5, "TRUE", "FALSE")
+
+str(dat_qc)
+write.csv(dat_qc, "kwrt_weather_drought_1888_2014_p141_rainfall_combined_qc.csv", row.names=F)
+png("qc_pairs.png")
+pairs(dat_qc[,3:5])
+dev.off()
+
+str(dat_out)
+library(disentangle)
+outfile <- "kwrt_weather_drought_1888_2014_p141_predicted_declarations.csv"
+
+  unit_defs <- reml_boilerplate(dat_out)
+  # you just got a quick and dirty unit_defs, these need to be made proper in morpho
+  # we can get the col names easily
+  col_defs <- names(dat_out)
+ds <- data.set(dat_out,
+               col.defs = col_defs,
+               unit.defs = unit_defs
+               )
+# now write EML metadata file
+eml_config(creator="Ivan Hanigan <ivanhanigan@gmail.com>")
+eml_write(ds,
+          file = gsub(".csv", ".xml", outfile),
+          title = "NA"
+          )
+  tempfile <- dir(pattern="^table_")
+  # rename the CSV file.
+  file.rename(tempfile, outfile)
+
 
 ```
 
 ### Compare the results
 
+```{r, echo = F, eval = F, results = "hide"}
+dir()
+infile <- "kwrt_weather_drought_1888_2014_p141_rainfall_combined_qc.csv"
+dat_qc <- read.csv(infile)
+png("qc_pairs.png")
+pairs(dat_qc[,3:5])
+dev.off()
+
+
+infile <- "kwrt_weather_drought_1888_2014_p141_predicted_declarations.csv"
+dat <- read.csv(infile)
+str(dat)
+
+subset(dat, year == 1982 | year == 1983)
+
+
+qc3 <- dat[dat$year>=1979 & dat$year < 1984,]
+qc3$date <- as.Date(paste(qc3$year, qc3$month, 1, sep = "-"))
+
+png(file.path('kwrt_weather_drought_1888_2014_p141_rainfall_combined_qc.png'),res=200,width = 2100, height = 1000)
+  plot(qc3$date,qc3$duration_bom_stn,type='l',main='Drought Index')
+ points(qc3$date,qc3$duration_bom_stn)
+ segments(min(qc3$date),4.5,max(qc3$date),4.5)
+
+ points(qc3$date,qc3$duration_awap, col = 'blue', pch = 16, cex = 0.5)
+
+ points(qc3$date,qc3$duration_emast, col = 'red', pch = 1, cex = 2)
+legend("topright", legend= c("Station", "AWAP", "EMAST"), col = c('black', 'blue', 'red'), pch = c(1, 16, 1), pt.cex = c(1,.5,2))
+dev.off()
+
+```
+
 Shown in Figure Y is the results
 
-![alttext](kwrt_weather_drought_1888_2014_p141_output3.png)
+![alttext](kwrt_weather_drought_1888_2014_p141_rainfall_combined_qc.png)
 
 ## Conclusions
 
