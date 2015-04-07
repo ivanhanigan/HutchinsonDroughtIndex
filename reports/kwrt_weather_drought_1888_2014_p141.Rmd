@@ -719,6 +719,94 @@ Shown in Figure Y is the results
 
 ![alttext](kwrt_weather_drought_1888_2014_p141_rainfall_combined_qc.png)
 
+### compare old publication
+
+```{r, results = 'hide', echo = FALSE, eval = F}
+library(swishdbtools)
+ch <- connect2postgres2("ewedb")
+
+##        lon       lat
+## 1 150.8929 -33.82107
+
+qc <- dbGetQuery(ch,
+"select t2.*,t1.*
+from bom_grids.rain_nsw_1890_2008_4 as t1 join (
+select bom_grids.grid_nsw.*
+from bom_grids.grid_nsw
+where st_intersects(
+st_GeomFromText(
+'POINT('||
+150.8929  ||
+' '||
+-33.82107 ||')'
+,4283)
+,bom_grids.grid_nsw.the_geom)
+) as t2
+on t1.gid=t2.gid
+")
+
+str(qc)
+paste(names(qc), sep = "", collapse = "','")
+namlist  <- c('year','month','rain','sum','count')
+qc <- qc[,namlist]
+head(qc)
+
+infile <- "kwrt_weather_drought_1888_2014_p141_rainfall_combined_qc.csv"
+dat_qc <- read.csv(infile)
+str(dat_qc)
+infile <- "kwrt_weather_drought_1888_2014_p141_predicted_declarations.csv"
+dat <- read.csv(infile)
+str(dat)
+
+dat_qc2 <- merge(dat,dat_qc)
+str(dat_qc2)
+str(qc)
+
+dat_qc2  <- merge(qc, dat_qc2)
+head(dat_qc2)
+par(mfrow = c(1,3))
+with(dat_qc2,
+     plot(rain, rain_bom_stn)
+     )
+with(dat_qc2,
+     plot(rain, rain_awap)
+     )
+with(dat_qc2,
+     plot(rain, rain_emast)
+     )
+
+head(dat)
+library(sqldf)
+dat_qc2 <- sqldf("select * from dat_qc2 order by year, month", drv = "SQLite")
+write.csv(dat_qc2, "kwrt_weather_drought_1888_2014_p141_predicted_declarations_with_old.csv", row.names = F)
+dat_qc2$timevar <- as.Date(paste(dat_qc2$year, dat_qc2$month, 1, sep = "-"))
+
+dat_qc2$old <- ifelse(dat_qc2$count > 4, TRUE, FALSE)
+head(dat_qc2)
+
+png("kwrt_weather_drought_1888_2014_p141_drought_compare.png", height = 800, width = 1300, res = 145)
+with(dat_qc2,
+     plot(timevar, rain, type = "l")
+     )
+par(new=T)
+plot(dat_qc2$timevar, dat_qc2$duration_bom_stn_declared, type = "n", ylab="", xlab = "", axes = F)
+points(dat_qc2$timevar, dat_qc2$duration_bom_stn_declared, col = "red", cex = .7, pch = 16)
+par(new=T)
+plot(dat_qc2$timevar, dat_qc2$duration_bom_stn_declared+.1, type = "n", ylab="", xlab = "", axes = F)
+points(dat_qc2$timevar, dat_qc2$old, col = "orange", cex = .7, pch = 16)
+par(new=T)
+plot(dat_qc2$timevar, dat_qc2$duration_bom_stn_declared+0.2, type = "n", ylab="", xlab = "", axes = F)
+points(dat_qc2$timevar, dat_qc2$duration_awap_declared, col = "blue", cex = .7, pch = 16)
+par(new=T)
+plot(dat_qc2$timevar, dat_qc2$duration_bom_stn_declared+0.3, type = "n", ylab="", xlab = "", axes = F)
+points(dat_qc2$timevar, dat_qc2$duration_emast_declared, col = "green", cex = .7, pch = 16)
+legend("bottomleft", legend = c("station", "bom_barnes",  "awap", "emast"), pch = c(16,16,16 ,16), col = c("red", "orange", "blue", "green"))
+title("Comparison of Hutchinson's Drought Index at Prospect Reservoir 1890 - 2008")
+dev.off()
+
+
+```
+
 ## Conclusions
 
 The end
