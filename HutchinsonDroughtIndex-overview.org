@@ -5,6 +5,13 @@
 #+LaTeX_CLASS_OPTIONS: [a4paper]
 #+LATEX: \tableofcontents
 -----
+* Intro
+Monthly drought data for Australia 1890-2008 using the Hutchinson Drought Index  [anudc:3313]
+The algorithm used to calculate the drought index using the Hutchinson method is stored in this repository. 
+
+
+Hanigan, Ivan (2012): Monthly drought data for Australia 1890-2008 using the Hutchinson Drought Index. Australian National University Data Commons. DOI: 10.4225/13/50BBFD7E6727A.
+http://dx.doi.org/10.4225/13/50BBFD7E6727A
 
 * TODO-list
 
@@ -13,6 +20,47 @@
 ** TODO identify key components for web page
 
 ** TODO publish station data set to AEKOS
+** TODO follow up publication to ADA
+-----Original Message-----
+From: Steven McEachern
+Sent: Wednesday, January 7, 2015 2:27 PM
+To: Ivan Hanigan
+Cc: ada@anu.edu.au
+Subject: Re: Drought Data
+ 
+Hi Ivan,
+ 
+I¹ve added the CSV files and the R script to our archive in zip format.
+The data is now stored in our deposit system and has the ADA ID number 01280.
+ 
+Once we¹ve processed the data and published it, it will then be available
+at: http://www.ada.edu.au/ada/01280 (but not yet).
+ 
+I¹ll need to get you to sign off a license agreement (available at: ), and we may need to follow up with some additional metadata, but for now it¹s stored away.
+If users want the data we will be able to provide it on request, but once we publish it we can make it available online.
+ 
+Re the License, I need to do some exploratory work with Nesstar (and Steve
+Hassan) to see how we change the access, but will aim to get this in place. (We have other depositors asking for this as well).
+ 
+Re the copyright - which dataset is that from? It¹s the POA data right?
+"Copyright
+Copyright © 2011, The Australian National University. All rights reserved.| © Copyright Commonwealth of Australia 2005, Bureau of Meteorology. All rights reserved.| ABS Copyright © Commonwealth of Australia 2001, Australian Bureau of Statistics Census data is licensed under a Creative Commons Attribution 2.5 Australia licence. All rights reserved."
+ 
+We probably need to check with IP folks to confirm - but I think you might be right, if the original data is not part of the dataset we are providing.
+ 
+ 
+Cheers,
+Steve
+ 
+ 
+ 
+--------------------------------
+Steven McEachern
+Director and Manager
+Australian Data Archive
+steven.mceachern@anu.edu.au
+Ph. (+61) 02 6125 2200
+--------------------------------
 * ad hoc
 ** prospect dam
 *** COMMENT hack-code
