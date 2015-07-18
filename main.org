@@ -88,6 +88,12 @@ exportPattern("^[[:alpha:]]+")
 *** R-drought_index_stations
 #+name:drought_index_stations
 #+begin_src R :session *R* :tangle R/drought_index_stations.r :exports none :eval no
+  #' @name drought_index_stations
+  #' @title Drought Index For Stations
+  #' @param data a dataframe with date, year month and rain
+  #' @param years the number of years in the time series
+  #' @param droughtThreshold the level of dryness below which a drought begins
+  
   drought_index_stations<-function(data,years,droughtThreshold=.375){
   # a drought index based on integrated six-monthly rainfall percentiles.
   # based on Professor Mike Hutchinson's work described in 
@@ -269,15 +275,21 @@ exportPattern("^[[:alpha:]]+")
 
 ** drought_index_grids
 *** R-drought_index_grids
+# name:drought_index_grids
+
+## TODO-list: 
+# count2 and sums, convert matrices to bricks.
+# set it up to work on subsets of the grid and put them back together after
+
 #+name:drought_index_grids
 #+begin_src R :session *R* :tangle R/drought_index_grids.r :exports none :eval no
-  ################################################################
-  # name:drought_index_grids
-
-  ## TODO-list: 
-  # count2 and sums, convert matrices to bricks.
-  # set it up to work on subsets of the grid and put them back together after
-
+  #' @name drought_index_grids
+  #' @title drought index using grids
+  #' @param rasterbrick a stack of grids
+  #' @param startyear the start year
+  #' @param endyear the end year
+  #' @param droughtThreshold the level of dryness
+  
   drought_index_grids <- function(rasterbrick,startyear,endyear,droughtThreshold=.375){
       
     b<-getValuesBlock(rasterbrick, row=500, nrows=5, col=500, ncols=5)
