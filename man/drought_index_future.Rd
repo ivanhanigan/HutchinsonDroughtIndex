@@ -1,0 +1,16 @@
+\name{drought_index_future}
+\alias{drought_index_future}
+\title{Drought Index For Stations for future projected rainfall}
+\usage{
+  droughtIndex_future(data, years, droughtThreshold = 0.375)
+}
+\arguments{
+  \item{data}{a dataframe with date (future), year (future),
+  month, rain (past) and rain_projected} \item{years}{the
+  number of years in the time series} \item{droughtThreshold}
+  {the level of dryness below which a drought begins}
+}
+\description{
+  Drought Index For Stations for future projected rainfall
+}
+
