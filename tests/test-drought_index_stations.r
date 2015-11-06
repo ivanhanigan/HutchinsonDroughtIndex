@@ -1,7 +1,7 @@
 
 ################################################################
 # name:drought_index_stations
-analyte <- read.table("~/data/HutchinsonDroughtIndex/inst/extdata/prcphq.046037.month.txt", quote="\"", skip = 1, nrows = 1440)
+analyte <- read.table("~/projects/HutchinsonDroughtIndex/inst/extdata/prcphq.046037.month.txt", quote="\"", skip = 1, nrows = 1440)
 
 # clean
 str(analyte)
