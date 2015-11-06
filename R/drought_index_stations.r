@@ -1,8 +1,12 @@
+
 #' @name drought_index_stations
 #' @title Drought Index For Stations
 #' @param data a dataframe with date, year month and rain
 #' @param years the number of years in the time series
 #' @param droughtThreshold the level of dryness below which a drought begins
+#' @return dataframe with droughtIndices
+#' @export
+
 
 drought_index_stations<-function(data,years,droughtThreshold=.375){
 # a drought index based on integrated six-monthly rainfall percentiles.

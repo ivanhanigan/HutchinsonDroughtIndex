@@ -94,6 +94,9 @@ exportPattern("^[[:alpha:]]+")
   #' @param data a dataframe with date, year month and rain
   #' @param years the number of years in the time series
   #' @param droughtThreshold the level of dryness below which a drought begins
+  #' @return dataframe with droughtIndices
+  #' @export
+  
   
   drought_index_stations<-function(data,years,droughtThreshold=.375){
   # a drought index based on integrated six-monthly rainfall percentiles.
@@ -290,6 +293,8 @@ exportPattern("^[[:alpha:]]+")
   #' @param startyear the start year
   #' @param endyear the end year
   #' @param droughtThreshold the level of dryness
+  #' @return dataframe with droughtIndices
+  #' @export
   
   drought_index_grids <- function(rasterbrick,startyear,endyear,droughtThreshold=.375){
       
@@ -366,13 +371,15 @@ plot(ct[,1], type = "l")
 
 ** drought_index_future
 *** R-drought_index_future
-#+begin_src R :session *shell* :tangle R/drought_index_future.R :exports none :eval no :padline no
+#+begin_src R :session *shell* :tangle R/drought_index_future.r :exports none :eval no :padline no
   #' @name drought_index_future
   #' @title Drought Index For Stations for future projected rainfall
   #' @param data a dataframe with date (future), year (future), month, rain (past) and rain_projected
   #' @param years the number of years in the time series
   #' @param droughtThreshold the level of dryness below which a drought begins
-
+  #' @return dataframe with droughtIndices
+  #' @export
+  
   drought_index_future <- function(data,years,droughtThreshold=.375){
   # a drought index based on integrated six-monthly rainfall percentiles.
   # based on Professor Mike Hutchinson's work described in
