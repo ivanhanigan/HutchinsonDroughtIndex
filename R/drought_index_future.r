@@ -2,7 +2,6 @@
 #' @title Drought Index For Stations for future projected rainfall
 #' @param data a dataframe with date , year, month, rain
 #' @param years the number of years in the time series
-#' @param baseline the start year and finish year to use as baseline
 #' @param droughtThreshold the level of dryness below which a drought begins
 #' @return dataframe with droughtIndices
 #' @export

@@ -8,7 +8,66 @@
 * TODO-list
 - http://mobile.abc.net.au/news/2015-07-06/drought-worries-rising-victoria-south-australia-rainfall-lowest/6597870
 * Introduction
-** DESCRIPTION
+
+** package doc
+#+name:swishdbtools-package
+#+begin_src R :session *R* :tangle man/HutchinsonDroughtIndex-package.Rd :exports none :eval no
+  \name{HutchinsonDroughtIndex-package}
+  \alias{HutchinsonDroughtIndex-package}
+  \alias{HutchinsonDroughtIndex}
+  \docType{package}
+  \title{
+  Hutchinson Drought Index
+  }
+  \description{
+  Climatic Drought
+  }
+  \details{
+  \tabular{ll}{
+  Package: \tab HutchinsonDroughtIndex\cr
+  Type: \tab Package\cr
+  Version: \tab 1.1\cr
+  Date: \tab 2015-11-06\cr
+  License: \tab GPL2\cr
+  }
+  The package is designed to take a timeseries for a single location such as region or weather station and compute the drought index.  Dev work on grid version.
+  }
+  \author{
+  
+  
+  Maintainer: <ivan.hanigan@gmail.com>
+  
+  }
+  \references{
+  
+  Smith, D. I, Hutchinson, M. F, & McArthur, R. J. (1992) Climatic and
+  Agricultural Drought: Payments and Policy. (Centre for Resource and
+  Environmental Studies, Australian National University, Canberra,
+  Australia). http://fennerschool-research.anu.edu.au/spatio-temporal/publications/cres_paper1992.pdf
+  
+  Hanigan, IC. 2012. The Hutchinson Drought Index Algorithm [Computer
+  Software].  https://github.com/ivanhanigan/HutchinsonDroughtIndex
+  
+  }
+  
+#+end_src
+
+** run tests
+#+name:test_project
+#+begin_src R :session *R* :tangle test_project.r :exports none :eval no
+  ################################################################
+  # name:test_project
+  require(testthat)
+  test_dir('tests')
+  
+#+end_src
+
+** DEPRECATED NAMESPACE
+#+name:NAMESPACE
+#+begin_src txt :tangle no :exports reports :eval no :padline
+exportPattern("^[[:alpha:]]+")
+#+end_src
+** DEPRECATED DESCRIPTION
 *** COMMENT DESCRIPTION-code
 #+name:DESCRIPTION
 #+begin_src R :session *R* :tangle no :exports none :eval no :padline no
@@ -29,65 +88,6 @@
       'drought_index_future.r'
       'drought_index_grids.r'
       'drought_index_stations.r'
-#+end_src
-
-** run tests
-#+name:test_project
-#+begin_src R :session *R* :tangle test_project.r :exports none :eval no
-  ################################################################
-  # name:test_project
-  require(testthat)
-  test_dir('tests')
-  
-#+end_src
-
-** package doc
-#+name:swishdbtools-package
-#+begin_src R :session *R* :tangle man/HutchinsonDroughtIndex-package.Rd :exports none :eval no
-\name{HutchinsonDroughtIndex-package}
-\alias{HutchinsonDroughtIndex-package}
-\alias{HutchinsonDroughtIndex}
-\docType{package}
-\title{
-Hutchinson Drought Index
-}
-\description{
-Climatic Drought
-}
-\details{
-\tabular{ll}{
-Package: \tab HutchinsonDroughtIndex\cr
-Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2014-01-14\cr
-License: \tab GPL2\cr
-}
-~~ An overview of how to use the package, including the most important functions ~~
-}
-\author{
-
-
-Maintainer: Who to complain to <ivan.hanigan@gmail.com>
-
-}
-\references{
-
-}
-\keyword{ package }
-\seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
-}
-\examples{
-
-}
-
-#+end_src
-
-** NAMESPACE
-#+name:NAMESPACE
-#+begin_src txt :tangle no :exports reports :eval no :padline
-exportPattern("^[[:alpha:]]+")
 #+end_src
 
 * Functions
@@ -627,8 +627,8 @@ plot(ct[,1], type = "l")
 #+end_src
 
 * Vignettes
-** COMMENT HutchinsonDroughtIndex-code
-#+begin_src tex :tangle inst/doc/HutchinsonDroughtIndex.Rnw :eval no :padline no
+** COMMENT DEPRECATED HutchinsonDroughtIndex-code
+#+begin_src tex :tangle no :eval no :padline no
 \documentclass{article}
 %\VignetteIndexEntry{HutchinsonDroughtIndex}
 \begin{document}

@@ -13,26 +13,26 @@ Climatic Drought
 \tabular{ll}{
 Package: \tab HutchinsonDroughtIndex\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2014-01-14\cr
+Version: \tab 1.1\cr
+Date: \tab 2015-11-06\cr
 License: \tab GPL2\cr
 }
-~~ An overview of how to use the package, including the most important functions ~~
+The package is designed to take a timeseries for a single location such as region or weather station and compute the drought index.  Dev work on grid version.
 }
 \author{
 
 
-Maintainer: Who to complain to <ivan.hanigan@gmail.com>
+Maintainer: <ivan.hanigan@gmail.com>
 
 }
 \references{
 
-}
-\keyword{ package }
-\seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
-}
-\examples{
+Smith, D. I, Hutchinson, M. F, & McArthur, R. J. (1992) Climatic and
+Agricultural Drought: Payments and Policy. (Centre for Resource and
+Environmental Studies, Australian National University, Canberra,
+Australia). http://fennerschool-research.anu.edu.au/spatio-temporal/publications/cres_paper1992.pdf
+
+Hanigan, IC. 2012. The Hutchinson Drought Index Algorithm [Computer
+Software].  https://github.com/ivanhanigan/HutchinsonDroughtIndex
 
 }

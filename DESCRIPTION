@@ -5,13 +5,15 @@ Version: 1.1
 Date: 2015-11-06
 Author: ivanhanigan, lucianaporforio, Michael Hutchinson
 Maintainer: <ivan.hanigan@gmail.com>
-Depends:
+Depends: 
     raster,
     rgdal,
     zoo
 Description: drought function
 License: GPL (>= 2)
-Collate:
+Collate: 
     'drought_index_future.r'
     'drought_index_grids.r'
     'drought_index_stations.r'
+Suggests: knitr
+VignetteBuilder: knitr
