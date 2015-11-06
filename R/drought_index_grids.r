@@ -1,4 +1,3 @@
-
 #' @name drought_index_grids
 #' @title drought index using grids
 #' @param rasterbrick a stack of grids

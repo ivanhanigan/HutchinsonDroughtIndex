@@ -1,4 +1,3 @@
-
 #' @name drought_index_stations
 #' @title Drought Index For Stations
 #' @param data a dataframe with date, year month and rain

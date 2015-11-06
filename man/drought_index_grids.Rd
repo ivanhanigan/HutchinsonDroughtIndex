@@ -6,8 +6,9 @@
     droughtThreshold = 0.375)
 }
 \arguments{
-  \item{rasterbrick}{a stack of grids} \item{startyear}
-  {the start year} \item{endyear}{the end year}
+  \item{rasterbrick}{a stack of grids} 
+  \item{startyear}{the start year} 
+  \item{endyear}{the end year}
   \item{droughtThreshold}{the level of dryness}
 }
 \description{
