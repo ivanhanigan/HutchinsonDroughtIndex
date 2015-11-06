@@ -570,7 +570,13 @@ plot(ct[,1], type = "l")
   ## summary(dat2)
   ## table(dat2$sd_group)
   ## head(dat2, 24)
-  ## #plot(dat2$date, dat2$avrain, type = "l")
+  ## par(mfrow = c(2,1))
+  ## for(sdi in sd_i){
+  ##   with(dat2[dat2$sd_group == sdi,],
+  ##        plot(date, avrain, type = "l")
+  ##        )
+  ##   title(sdi)
+  ## }
   ## write.csv(dat2, "~/projects/HutchinsonDroughtIndex/inst/extdata/GARNAUT_CLIMATE_CHANGE_drought_futures_dry_southwest_slopes_sd07.csv", row.names = F)
   
   library(HutchinsonDroughtIndex)
