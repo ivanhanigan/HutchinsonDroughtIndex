@@ -6,7 +6,15 @@
 #+LATEX: \tableofcontents
 -----
 * TODO-list
+** news story
 - http://mobile.abc.net.au/news/2015-07-06/drought-worries-rising-victoria-south-australia-rainfall-lowest/6597870
+** build
+devtools::build()
+  ‘HutchinsonDroughtIndex/inst/extdata/GARNAUT_CLIMATE_CHANGE_drought_futures_dry_southwest_slopes_sd07.csv’
+
+[1] "/home/ivan_hanigan/projects/HutchinsonDroughtIndex_1.1.tar.gz"
+> install.packages("~/projects/HutchinsonDroughtIndex_1.1.tar.gz", repos = NULL, type = "source")
+rm these after as clutter
 * Introduction
 
 ** package doc
@@ -645,4 +653,10 @@ x <- rnorm(100,1,2)
 x
 @
 \end{document}
+#+end_src
+*** COMMENT vig
+#+name:vig
+#+begin_src R :session *R* :tangle no :exports none :eval no
+#### name:vig ####
+setwd("vignettes")
 #+end_src
