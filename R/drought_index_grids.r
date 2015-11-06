@@ -1,9 +1,12 @@
+
 #' @name drought_index_grids
 #' @title drought index using grids
 #' @param rasterbrick a stack of grids
 #' @param startyear the start year
 #' @param endyear the end year
 #' @param droughtThreshold the level of dryness
+#' @return dataframe with droughtIndices
+#' @export
 
 drought_index_grids <- function(rasterbrick,startyear,endyear,droughtThreshold=.375){
     
