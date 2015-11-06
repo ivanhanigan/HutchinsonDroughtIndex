@@ -1,23 +1,39 @@
 
 ################################################################
 # name:drought_index_stations
-analyte <- read.table("~/data/HutchinsonDroughtIndex/inst/extdata/prcphq.046037.month.txt", quote="\"", skip = 1, nrows = 1440)
+# for info see
+# https://github.com/ivanhanigan/GARNAUT_CLIMATE_CHANGE_REVIEW
+# drought futures sub project
+
+## dat <- read.csv("~/projects/GARNAUT_CLIMATE_CHANGE_REVIEW/drought_futures/data/rain_future_estimated_dry.csv", stringsAsFactors = F)
+
+## # drop the first year as only half
+## names(dat)
+
+## head(dat)
+## dat$date <- as.Date(paste(dat$year_future, dat$month, 1, sep = "-"))
+
+## sds <- names(table(dat$sd_group))
+## sds
+
+## # save a test dataset for developing the fucntion with, transfer to
+## # hutch package
+## sd_i <- "Central West"
+## dat2 <- dat[dat$year > 1890 & dat$sd_group == sd_i, c('date','year_future','month','avrain','rain_projected')]
+## summary(dat2)
+## head(dat2, 24)
+## plot(dat2$date, dat2$avrain, type = "l")
+# write.csv(dat2, "~/projects/HutchinsonDroughtIndex/inst/extdata/GARNAUT_CLIMATE_CHANGE_drought_futures_dry_central_west_sd07.csv", row.names = F)
+
+
+analyte <- read.csv("~/projects/HutchinsonDroughtIndex/inst/extdata/GARNAUT_CLIMATE_CHANGE_drought_futures_dry_central_west_sd07.csv")
 
 # clean
 str(analyte)
 head(analyte);tail(analyte)
 
-analyte <- data.frame(analyte[,1], substr(analyte[,1], 1,4) , substr(analyte[,1],5,6), analyte[,3])
-names(analyte) <- c('date',  'year' , 'month' ,'rain')
-str(analyte)
-analyte$year <- as.numeric(as.character(analyte$year))
-analyte$month <- as.numeric(as.character(analyte$month))
-str(analyte)
-subset(data.frame(table(na.omit(analyte)[,"year"])), Freq < 12)
-# are all months present?
-
 # do
-drt <- drought_index_stations(data=analyte,years=length(names(table(analyte$year))),droughtThreshold=.375)
+drt <- drought_index_future(data=analyte,years=length(names(table(analyte$year_future))),droughtThreshold=.375)
 
 # report
 summary(drt)

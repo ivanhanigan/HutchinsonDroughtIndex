@@ -4,14 +4,14 @@
 #' @param years the number of years in the time series
 #' @param droughtThreshold the level of dryness below which a drought begins
 
-droughtIndex_future <- function(data,years,droughtThreshold=.375){
+drought_index_future <- function(data,years,droughtThreshold=.375){
 # a drought index based on integrated six-monthly rainfall percentiles.
 # based on Professor Mike Hutchinson's work described in
 # Smith D, Hutchinson M, McArthur R. Climatic and Agricultural Drought: Payments and Policy.
 # Canberra, ACT: Centre for Resource and Environmental Studies, Australian National University. 1992.
 
 # Ivan C Hanigan
-# June 2011.
+# Nov 2015.
 # GPL2
 # for updates please see https://github.com/ivanhanigan/HutchinsonDroughtIndex.
 
