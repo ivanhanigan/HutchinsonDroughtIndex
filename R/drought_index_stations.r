@@ -1,4 +1,3 @@
-
 #' @name drought_index_stations
 #' @title Drought Index For Stations
 #' @param data a dataframe with date, year month and rain
@@ -6,8 +5,7 @@
 #' @param droughtThreshold the level of dryness below which a drought begins
 #' @return dataframe with droughtIndices
 #' @export
-
-
+#'
 drought_index_stations<-function(data,years,droughtThreshold=.375){
 # a drought index based on integrated six-monthly rainfall percentiles.
 # based on Professor Mike Hutchinson's work described in 
