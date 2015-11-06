@@ -12,6 +12,6 @@ Depends:
 Description: drought function
 License: GPL (>= 2)
 Collate:
-    'drought_index_future.R'
+    'drought_index_future.r'
     'drought_index_grids.r'
     'drought_index_stations.r'
