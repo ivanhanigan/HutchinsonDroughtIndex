@@ -11,18 +11,24 @@
 ** DESCRIPTION
 *** COMMENT DESCRIPTION-code
 #+name:DESCRIPTION
-#+begin_src R :session *R* :tangle DESCRIPTION :exports none :eval no :padline no
+#+begin_src R :session *R* :tangle no :exports none :eval no :padline no
   Package: HutchinsonDroughtIndex
   Type: Package
-  Title: Hutchinson's Drought Index  
+  Title: Hutchinson's Drought Index
   Version: 1.1
   Date: 2015-11-06
   Author: ivanhanigan, lucianaporforio, Michael Hutchinson
   Maintainer: <ivan.hanigan@gmail.com>
-  Depends: raster, rgdal, zoo
+  Depends:
+      raster,
+      rgdal,
+      zoo
   Description: drought function
   License: GPL (>= 2)
-  
+  Collate:
+      'drought_index_future.r'
+      'drought_index_grids.r'
+      'drought_index_stations.r'
 #+end_src
 
 ** run tests
@@ -88,7 +94,7 @@ exportPattern("^[[:alpha:]]+")
 ** drought_index_stations
 *** R-drought_index_stations
 #+name:drought_index_stations
-#+begin_src R :session *R* :tangle R/drought_index_stations.r :exports none :eval no
+#+begin_src R :session *R* :tangle R/drought_index_stations.r :exports none :eval no :padline no
   #' @name drought_index_stations
   #' @title Drought Index For Stations
   #' @param data a dataframe with date, year month and rain
@@ -96,8 +102,7 @@ exportPattern("^[[:alpha:]]+")
   #' @param droughtThreshold the level of dryness below which a drought begins
   #' @return dataframe with droughtIndices
   #' @export
-  
-  
+  #' 
   drought_index_stations<-function(data,years,droughtThreshold=.375){
   # a drought index based on integrated six-monthly rainfall percentiles.
   # based on Professor Mike Hutchinson's work described in 
@@ -240,7 +245,7 @@ exportPattern("^[[:alpha:]]+")
 #+end_src
 *** test-drought_index_stations
 #+name:drought_index_stations
-#+begin_src R :session *R* :tangle tests/test-drought_index_stations.r :exports none :eval no
+#+begin_src R :session *R* :tangle tests/test-drought_index_stations.r :exports none :eval no 
   ################################################################
   # name:drought_index_stations
   analyte <- read.table("~/projects/HutchinsonDroughtIndex/inst/extdata/prcphq.046037.month.txt", quote="\"", skip = 1, nrows = 1440)
@@ -286,7 +291,7 @@ exportPattern("^[[:alpha:]]+")
 # set it up to work on subsets of the grid and put them back together after
 
 #+name:drought_index_grids
-#+begin_src R :session *R* :tangle R/drought_index_grids.r :exports none :eval no
+#+begin_src R :session *R* :tangle R/drought_index_grids.r :exports none :eval no :padline no
   #' @name drought_index_grids
   #' @title drought index using grids
   #' @param rasterbrick a stack of grids
@@ -295,7 +300,7 @@ exportPattern("^[[:alpha:]]+")
   #' @param droughtThreshold the level of dryness
   #' @return dataframe with droughtIndices
   #' @export
-  
+  #'
   drought_index_grids <- function(rasterbrick,startyear,endyear,droughtThreshold=.375){
       
     b<-getValuesBlock(rasterbrick, row=500, nrows=5, col=500, ncols=5)
@@ -379,7 +384,7 @@ plot(ct[,1], type = "l")
   #' @param droughtThreshold the level of dryness below which a drought begins
   #' @return dataframe with droughtIndices
   #' @export
-  
+  #'
   drought_index_future <- function(data,years,droughtThreshold=.375){
   # a drought index based on integrated six-monthly rainfall percentiles.
   # based on Professor Mike Hutchinson's work described in
