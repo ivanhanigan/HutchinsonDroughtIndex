@@ -1,3 +1,4 @@
+
 ---
 title: "Hutchinson Drought Index"
 author: "Ivan Hanigan"
@@ -9,52 +10,56 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Hello world.  This is my first vignette.  The boilderplate code follows:
+# Introduction
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+This is a short introduction to the algorithm.  For fuller explanation see the original chapter of the report, included in the documentation of this package.
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+# The southwest slopes and plains region of New South Wales
 
-## Vignette Info
+- The southwest slopes and plains are included as a case study
+- Data from the Garnaut Climate Change Review are provided
+- These apply the future scenarios to the century and assumes that the rainfall pattern will be a repeat with the new conditions  
+- This is obviously too simplistic, but was the method applied in our work in 2008 and of historical interest  
 
-Note the various macros within the `vignette` setion of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
-
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r, eval = F, echo = T}
+library(HutchinsonDroughtIndex)
+indir <- file.path(system.file(package="HutchinsonDroughtIndex"), "extdata")
+dir(indir)
+infile <- "GARNAUT_CLIMATE_CHANGE_drought_futures_dry_southwest_slopes_sd07.csv"
+dat <- read.csv(file.path(indir, infile))
+str(dat)
+dat$date <- as.Date(dat$date)
+sds <- names(table(dat$sd_group))
+png("graphs/rainfall_from_garnaut_review.png")
+par(mfrow = c(2,1))
+for(sdi in sds){
+with(dat[dat$sd_group == sdi,],
+  plot(date, avrain, type = "l", col = "grey")
+)
+with(dat[dat$sd_group == sdi,],
+  lines(lowess(avrain ~ date, f = 0.02),  col = "blue")
+)
+  title(sdi)
+}
+dev.off()
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+![graphs/rainfall_from_garnaut_review.png](graphs/rainfall_from_garnaut_review.png)
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+# Hutchinsons indices based on entire historical distribution
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+- The method was first made available as a simple algorithm that looks at the entire distribution of the time series
 
-## More Examples
+```{r, eval = F, echo = T}
+# just use the observed record
+dat2 <- subset(dat, year <= 2007)
+tail(dat2)
+# the function runs on one region only
+#for(sdi in sds){
+sdi <- sds[1]
+  indat <- subset(dat2, sd_group == sdi, select = c("date", "year", "month", "avrain"))
+  drt <- drought_index_stations(indat, years = length(names(table(indat$year))))
+str(drt)
+#}
 
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
 ```
-
-Also a quote using `>`:
-
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))

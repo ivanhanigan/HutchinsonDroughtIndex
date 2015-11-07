@@ -107,11 +107,12 @@ exportPattern("^[[:alpha:]]+")
   #' @title Drought Index For Stations
   #' @param data a dataframe with date, year month and rain
   #' @param years the number of years in the time series
+  #' @param M number of months in rolling sum, default 6
   #' @param droughtThreshold the level of dryness below which a drought begins
   #' @return dataframe with droughtIndices
   #' @export
   #'
-  drought_index_stations<-function(data,years,droughtThreshold=.375){
+  drought_index_stations<-function(data,years,M=6,droughtThreshold=.375){
   # a drought index based on integrated six-monthly rainfall percentiles.
   # based on Professor Mike Hutchinson's work described in 
   # Smith D, Hutchinson M, McArthur R. Climatic and Agricultural Drought: Payments and Policy. 
@@ -141,9 +142,8 @@ exportPattern("^[[:alpha:]]+")
    
   #calculate M month totals
   # started with 6 (current and prior months)
-  x<-ts(data[,4],start=1,end=c(years,12),frequency=12)
-  x<-c(rep(NA,5),x+lag(x,1)+lag(x,2)+lag(x,3)+lag(x,4)+lag(x,5))
-  # TASK need to use rollapply?
+  x <- ts(data[,4],start=1,end=c(years,12),frequency=12)
+  x <- zoo::rollapplyr(x, width = M, FUN = sum, fill = NA)
   data$sixmnthtot<-x
   data<-na.omit(data)
   
@@ -389,11 +389,12 @@ plot(ct[,1], type = "l")
   #' @title Drought Index For Stations for future projected rainfall
   #' @param data a dataframe with date , year, month, rain
   #' @param years the number of years in the time series
+  #' @param M number of months in rolling sum, default 6
   #' @param droughtThreshold the level of dryness below which a drought begins
   #' @return dataframe with droughtIndices
   #' @export
   #'
-  drought_index_future <- function(data,years,baseline,droughtThreshold=.375){
+  drought_index_future <- function(data,years,baseline,M=6,droughtThreshold=.375){
   # a drought index based on integrated six-monthly rainfall percentiles.
   # based on Professor Mike Hutchinson's work described in
   # Smith D, Hutchinson M, McArthur R. Climatic and Agricultural Drought: Payments and Policy.
@@ -426,11 +427,8 @@ plot(ct[,1], type = "l")
   #summary(data_baseline)
   nyears <- length(names(table(data_baseline$year)))
   #calculate M month totals
-  # started with 6 (current and prior months)
-  
-  x<-ts(data_baseline[,4],start=1,end=c(nyears,12),frequency=12)
-  x<-c(rep(NA,5),x+lag(x,1)+lag(x,2)+lag(x,3)+lag(x,4)+lag(x,5))
-  # TASK need to use rollapply?
+  x <- ts(data_baseline[,4],start=1,end=c(nyears,12),frequency=12)
+  x <- zoo::rollapplyr(x, width = M, FUN = sum, fill = NA)
   data_baseline$sixmnthtot <- x
   data_baseline <- na.omit(data_baseline)
   
@@ -634,6 +632,21 @@ plot(ct[,1], type = "l")
   
 #+end_src
 
+*** COMMENT scratch
+#+name:scratch
+#+begin_src R :session *R* :tangle scratch.R :exports none :eval no
+#### name:scratch ####
+x<-ts(data_baseline[,4],start=1,end=c(nyears,12),frequency=12)
+x3<-c(rep(NA,5),x+lag(x,1)+lag(x,2)+lag(x,3)+lag(x,4)+lag(x,5))
+library(zoo)
+x2 <- x
+?rollapply
+M=6
+qc <- data.frame(x2, rollapplyr(x2, width = M, FUN = sum, fill = NA), x3)
+plot(qc[,2], qc[,3])
+
+#+end_src
+
 * Vignettes
 ** COMMENT DEPRECATED HutchinsonDroughtIndex-code
 #+begin_src tex :tangle no :eval no :padline no
@@ -656,7 +669,116 @@ x
 #+end_src
 *** COMMENT vig
 #+name:vig
-#+begin_src R :session *R* :tangle no :exports none :eval no
-#### name:vig ####
-setwd("vignettes")
+#+begin_src R :session *R* :tangle no :exports none :eval yes
+  #### name:vig ####
+  setwd("~/projects/HutchinsonDroughtIndex/vignettes")
+  library(knitr)
+  #dir()
+  rmarkdown::render("HutchinsonDroughtIndex.Rmd")
+  #browseURL("HutchinsonDroughtIndex.html")
+#+end_src
+
+#+RESULTS: vig
+: /home/ivan_hanigan/projects/HutchinsonDroughtIndex/vignettes/HutchinsonDroughtIndex.html
+
+*** COMMENT head
+#+begin_src R :session *R* :tangle vignettes/HutchinsonDroughtIndex.Rmd :exports none :eval no :padline
+---
+title: "Hutchinson Drought Index"
+author: "Ivan Hanigan"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Hutchinson Drought Index}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+#+end_src
+*** COMMENT intro
+#+begin_src R :session *R* :tangle vignettes/HutchinsonDroughtIndex.Rmd :exports none :eval no :padline
+
+# Introduction
+
+This is a short introduction to the algorithm.  For fuller explanation see the original chapter of the report, included in the documentation of this package.
+
+#+end_src
+*** COMMENT show central west
+**** scratch
+#+name:scratch
+#+begin_src R :session *R* :tangle scratch.R :exports none :eval no
+  #### name:scratch ####
+  dat <- read.csv("~/projects/HutchinsonDroughtIndex/inst/extdata/GARNAUT_CLIMATE_CHANGE_drought_futures_dry_southwest_slopes_sd07.csv")
+  
+  # better just check that these data are the same as the rainfall I had
+  # for the suicide paper
+  qc1 <- subset(dat, year <= 2007)
+  indir <- "~/Private/SuicideAndDroughtInNSW"
+  dir(indir)
+  infile <- "suicidedroughtnsw19702007_rates_drought.csv"
+  qc2 <- read.csv(file.path(indir, infile))
+  names(qc2)
+  summary(qc2)
+  qc2 <- subset(qc2, sex == "1" & agegp == "30_39")
+  qc3 <- merge(qc1, qc2, by.x = c("sd_group", "year", "month"), by.y = c("sd_group", "dthyy", "dthmm"))
+  with(qc3, plot(avrain.x, avrain.y))
+  abline(0,1)
+  # great
+  
+#+end_src
+
+**** good
+#+begin_src R :session *R* :tangle vignettes/HutchinsonDroughtIndex.Rmd :exports none :eval no :padline
+  # The southwest slopes and plains region of New South Wales
+  
+  - The southwest slopes and plains are included as a case study
+  - Data from the Garnaut Climate Change Review are provided
+  - These apply the future scenarios to the century and assumes that the rainfall pattern will be a repeat with the new conditions  
+  - This is obviously too simplistic, but was the method applied in our work in 2008 and of historical interest  
+  
+  ```{r, eval = F, echo = T}
+  library(HutchinsonDroughtIndex)
+  indir <- file.path(system.file(package="HutchinsonDroughtIndex"), "extdata")
+  dir(indir)
+  infile <- "GARNAUT_CLIMATE_CHANGE_drought_futures_dry_southwest_slopes_sd07.csv"
+  dat <- read.csv(file.path(indir, infile))
+  str(dat)
+  dat$date <- as.Date(dat$date)
+  sds <- names(table(dat$sd_group))
+  png("graphs/rainfall_from_garnaut_review.png")
+  par(mfrow = c(2,1))
+  for(sdi in sds){
+  with(dat[dat$sd_group == sdi,],
+    plot(date, avrain, type = "l", col = "grey")
+  )
+  with(dat[dat$sd_group == sdi,],
+    lines(lowess(avrain ~ date, f = 0.02),  col = "blue")
+  )
+    title(sdi)
+  }
+  dev.off()
+  ```
+  
+  ![graphs/rainfall_from_garnaut_review.png](graphs/rainfall_from_garnaut_review.png)
+  
+#+end_src
+*** show original method
+#+begin_src R :session *R* :tangle vignettes/HutchinsonDroughtIndex.Rmd :exports none :eval no :padline
+  # Hutchinsons indices based on entire historical distribution
+  
+  - The method was first made available as a simple algorithm that looks at the entire distribution of the time series
+  
+  ```{r, eval = F, echo = T}
+  # just use the observed record
+  dat2 <- subset(dat, year <= 2007)
+  tail(dat2)
+  # the function runs on one region only
+  #for(sdi in sds){
+  sdi <- sds[1]
+    indat <- subset(dat2, sd_group == sdi, select = c("date", "year", "month", "avrain"))
+    drt <- drought_index_stations(indat, years = length(names(table(indat$year))))
+  str(drt)
+  #}
+  
+  ```
+  
 #+end_src

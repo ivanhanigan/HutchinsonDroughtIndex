@@ -2,11 +2,12 @@
 #' @title Drought Index For Stations for future projected rainfall
 #' @param data a dataframe with date , year, month, rain
 #' @param years the number of years in the time series
+#' @param M number of months in rolling sum, default 6
 #' @param droughtThreshold the level of dryness below which a drought begins
 #' @return dataframe with droughtIndices
 #' @export
 #'
-drought_index_future <- function(data,years,baseline,droughtThreshold=.375){
+drought_index_future <- function(data,years,baseline,M=6,droughtThreshold=.375){
 # a drought index based on integrated six-monthly rainfall percentiles.
 # based on Professor Mike Hutchinson's work described in
 # Smith D, Hutchinson M, McArthur R. Climatic and Agricultural Drought: Payments and Policy.
@@ -39,11 +40,8 @@ data_baseline <- data[data$year >= min(baseline) & data$year <= max(baseline),]
 #summary(data_baseline)
 nyears <- length(names(table(data_baseline$year)))
 #calculate M month totals
-# started with 6 (current and prior months)
-
-x<-ts(data_baseline[,4],start=1,end=c(nyears,12),frequency=12)
-x<-c(rep(NA,5),x+lag(x,1)+lag(x,2)+lag(x,3)+lag(x,4)+lag(x,5))
-# TASK need to use rollapply?
+x <- ts(data_baseline[,4],start=1,end=c(nyears,12),frequency=12)
+x <- zoo::rollapplyr(x, width = M, FUN = sum, fill = NA)
 data_baseline$sixmnthtot <- x
 data_baseline <- na.omit(data_baseline)
 
