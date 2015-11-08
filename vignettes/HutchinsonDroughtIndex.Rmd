@@ -23,6 +23,8 @@ This is a short introduction to the algorithm.  For fuller explanation see the o
 
 ```{r, eval = F, echo = T}
 library(HutchinsonDroughtIndex)
+projdir <- "~/projects/HutchinsonDroughtIndex/vignettes"
+setwd(projdir)
 indir <- file.path(system.file(package="HutchinsonDroughtIndex"), "extdata")
 dir(indir)
 infile <- "GARNAUT_CLIMATE_CHANGE_drought_futures_dry_southwest_slopes_sd07.csv"
@@ -56,10 +58,39 @@ dat2 <- subset(dat, year <= 2007)
 tail(dat2)
 # the function runs on one region only
 #for(sdi in sds){
-sdi <- sds[1]
+sdi <- sds[2]
   indat <- subset(dat2, sd_group == sdi, select = c("date", "year", "month", "avrain"))
-  drt <- drought_index_stations(indat, years = length(names(table(indat$year))))
+  drt <- drought_index_stations(indat, years = length(names(table(indat$year))), M = 6)
 str(drt)
 #}
 
+# when is there an example of the enhancement making a drought longer?
+tail(drt[drt$sums2!=drt$sums,])
+# plot this one
+qc3=drt[drt$year>=1999,]
+
+png(file.path("graphs", sprintf("%sDroughtEnhanced.png",sdi)), res=200, width = 2100, height = 1000)
+par(mfrow=c(4,1),mar=c(2.5,2,1.5,1))
+plot(qc3$date,qc3$avrain,type='l',main=sprintf('%s: raw monthly rainfall', sdi))
+#points(qc3$date,qc3$avrain)
+axis(1,at=as.Date(paste(1994:1998,1,1,sep='-')), labels = 1994:1998)
+lines(qc3$date,qc3$sixmnthtot/6, lwd = 2) #,type='l',main='6-monthly total rainfall')
+points(qc3$date,qc3$sixmnthtot/6)
+axis(1,at=as.Date(paste(1994:1998,1,1,sep='-')), labels = 1994:1998)
+plot(qc3$date,qc3$index,type='l',main='rescaled percentiles -4 to +4, -1 is Palmer Index Mild Drought',ylim=c(-4,4))
+points(qc3$date,qc3$index)
+segments(min(qc3$date),-1,max(qc3$date),-1)
+segments(min(qc3$date),0,max(qc3$date),0,lty=2)
+plot(qc3$date,qc3$sums,type='l',main='sums below -1 threshold, sums of -17.5 or less is a drought')
+points(qc3$date,qc3$sums)
+segments(min(qc3$date),-17.5,max(qc3$date),-17.5)
+axis(1,at=as.Date(paste(1994:1998,1,1,sep='-')), labels = 1994:1998)
+plot(qc3$date,qc3$sums2,type='l',main='enhanced sums of months if already passed threshold of -17.5 and percentiles less than 50%')
+points(qc3$date,qc3$sums2)
+segments(min(qc3$date),-17.5,max(qc3$date),-17.5)
+axis(1,at=as.Date(paste(1994:1998,1,1,sep='-')), labels = 1994:1998)
+dev.off()
+
 ```
+
+![graphs/MurrumbidgeeDroughtEnhanced.png](graphs/MurrumbidgeeDroughtEnhanced.png)
