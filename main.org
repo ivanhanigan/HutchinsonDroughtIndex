@@ -818,12 +818,20 @@ This is a short introduction to the algorithm.  For fuller explanation see the o
 ** 2015-11-08 results from Ivan Re: build test dataset for NSW SDs using AWAP historic + CSIRO future
 - aim is to average gridded awap data on nswsd07, just like the garnaut stuff
 
-# awap
+# 8th november preparatory work
+
+## awap
 - AWAP is good updating whereas emast is now stopped
 -  A script is to download the spatial grids of the Australian Water Availability Project
 - http://www.bom.gov.au/jsp/awap/
 - https://github.com/swish-climate-impact-assessment/AWAP_GRIDS
 
-# access
+## access
 - Australian Community Climate and Earth System Simulator (ACCESS) is good future 
 - http://www.csiro.au/en/Research/OandA/Areas/Assessing-our-climate/CAWCR/ACCESS
+
+# 9th Nov 
+- prepping for Lu to help
+- downloaded all awap data again on swish-R
+- extract the vals for the NSWSD11, and NSW DPI PPD
+- calc drought with latest function
