@@ -1,21 +1,20 @@
-<!-- --- -->
-<!-- title: "kwrt weather drought 1888 2014 p141" -->
-<!-- author: Ivan C. Hanigan -->
-<!-- output: -->
-<!--   html_document: -->
-<!--     toc: true -->
-<!--     theme: united -->
-<!--     number_sections: no     -->
-<!--   pdf_document: -->
-<!--     toc: true -->
-<!--     toc_depth: 3 -->
-<!--     highlight: zenburn -->
-<!--     keep_tex: true -->
-<!--     number_sections: no         -->
-<!-- documentclass: article -->
-<!-- classoption: a4paper -->
-<!-- --- -->
-
+---
+title: "kwrt weather drought 1888 2014 p141" 
+author: Ivan C. Hanigan 
+output: 
+  html_document: 
+    toc: true 
+    theme: united 
+    number_sections: no     
+  pdf_document: 
+    toc: true 
+    toc_depth: 3 
+    highlight: zenburn 
+    keep_tex: true 
+    number_sections: no         
+documentclass: article 
+classoption: a4paper 
+---
 
   
 ```{r echo = F, eval=F, results="hide"}
@@ -739,8 +738,8 @@ st_GeomFromText(
 150.8929  ||
 ' '||
 -33.82107 ||')'
-,4283)
-,bom_grids.grid_nsw.the_geom)
+4283)
+bom_grids.grid_nsw.the_geom)
 ) as t2
 on t1.gid=t2.gid
 ")
