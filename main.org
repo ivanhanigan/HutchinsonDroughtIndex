@@ -102,7 +102,7 @@ exportPattern("^[[:alpha:]]+")
 
 * Functions
 ** drought_index_stations
-*** R-drought_index_stations
+*** TODO R-drought_index_stations
 #+name:drought_index_stations
 #+begin_src R :session *shell* :tangle R/drought_index_stations.r :exports none :eval no :padline no
   #' @name drought_index_stations
@@ -111,10 +111,12 @@ exportPattern("^[[:alpha:]]+")
   #' @param years the number of years in the time series
   #' @param M number of months in rolling sum, default 6
   #' @param droughtThreshold the level of dryness below which a drought begins
+  #' @param integrationThresholdCount the duration of dryness above which a drought begins
+  #' @param integrationThresholdSum the intensity of dryness below which a drought begins
   #' @return dataframe with droughtIndices
   #' @export
   #'
-  drought_index_stations<-function(data,years,M=6,droughtThreshold=.375){
+  drought_index_stations<-function(data,years,M=6,droughtThreshold=.375, integrationThresholdCount = 4, integrationThresholdSum = -17.5){
   # a drought index based on integrated six-monthly rainfall percentiles.
   # based on Professor Mike Hutchinson's work described in 
   # Smith D, Hutchinson M, McArthur R. Climatic and Agricultural Drought: Payments and Policy. 
@@ -187,9 +189,12 @@ exportPattern("^[[:alpha:]]+")
           # )
           # }
   
+  # calculate what the threshold is in -4 to +4 terms when given as
+  # percentile (fraction 0 to 1)
+  drt_thresh <- 8*(droughtThreshold - 0.5)
   # NEW and FAST
-  # counts can be done with this funky bit of code 
-  x<-data$index<=-1
+  # counts can be done with this funky bit of code
+  x<- data$index <= drt_thresh
   xx <- (cumsum(!x) + 1) * x 
   x2<-(seq_along(x) - match(xx, xx) + 1) * x 
   data$count<-x2
@@ -206,19 +211,21 @@ exportPattern("^[[:alpha:]]+")
   # j=1080 # 1980-06
   # data[j,]
   
+  # index[j] = 0 is median 
   for(j in 2:nrow(data)){ 
-  data$count2[j] <- if(data$count2[j-1] >= 5 & data$index[j] <= 0){
+  data$count2[j] <- if(data$count2[j-1] > integrationThresholdCount & data$index[j] <= 0){
           data$count2[j-1] + 1
           } else {                
           # ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
           data$count2[j]
           }
   }
+  
   ############################################################
   # newnode SUMS
   # NEW and FAST? or add as an option?
   data$sums<-as.numeric(0)
-  y <- ifelse(data$index >= -1, 0, data$index)
+  y <- ifelse(data$index >= drt_thresh, 0, data$index)
   f <- data$index < -1
   f <- (cumsum(!f) + 1) * f 
   z <- unsplit(lapply(split(y,f),cumsum),f)
@@ -238,7 +245,7 @@ exportPattern("^[[:alpha:]]+")
   # data[j,]
   
   for(j in 2:nrow(data)){ 
-  data$sums2[j] <- if(data$sums2[j-1] <= -17.5 & data$index[j] <= 0){
+  data$sums2[j] <- if(data$sums2[j-1] <= integrationThresholdSum & data$index[j] <= 0){
           data$sums2[j-1] + data$index[j]
           } else {                
           # ifelse(data$count[j-1] > 0 & data$index[j] < 0, 1+data$count[j-1],
