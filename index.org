@@ -1,0 +1,40 @@
+#+TITLE:Hutchinson's Drought Index 
+#+AUTHOR: Ivan Hanigan
+#+email: ivan.hanigan@anu.edu.au
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [a4paper]
+#+LATEX_HEADER: \usepackage{amssymb,amsmath}
+#+LATEX: \hypersetup{hidelinks=true}
+#+LATEX: \tableofcontents
+-----
+
+* Summary
+
+#+begin_src R :session *R* 
+SOFTWARE PACKAGE   Hutchinson Drought Index R-package
+DEVELOPER   Ivan Hanigan (Australian National University)
+APPLICATION   Calculate extreme weather events in point and grid form, reflecting agricultural droughts by using rainfall data only.
+
+#+end_src
+
+* Background
+
+The Hutchinson Drought Index (or Drought Severity Index) is a climatic drought index that was designed to reflect agricultural droughts using only rainfall data. The index was invented by Michael Hutchinson at the Australian National University in 1992 (Smith, Hutchinson, McArthur, 1992).
+
+Ivan Hanigan wrote an R-package, available via GitHub, that enables users to calculate extreme weather events in point and grid form, of daily weather or seasonal climate data. The R package describes the calculations and enables the user to download data to play with. Readers wishing to reproduce the data analysis can do so by running the R script.
+
+The R-package was developed with financial support from Professor Tony McMichael's via the "Australia Fellowship" from the the National Health and Medical Research Council, the National Centre for Epidemiology and Population Health, Australian National University; and the Australian National Data Service (ANDS). ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program and the Education Investment Fund (EIF) Super Science Initiative.
+
+ 
+
+* References
+
+1. Smith, D. I, Hutchinson, M. F, & McArthur, R. J. (1992) Climatic and Agricultural Drought: Payments and Policy. (Centre for Resource and Environmental Studies, Australian National University, Canberra, Australia.
+
+2. Hanigan, IC, Butler, CD, Kokic, PN, Hutchinson, MF. Suicide and Drought in New South Wales, Australia, 1970-2007. Proceedings of the National Academy of Science USA 2012, vol. 109 no. 35 13950-13955, doi: 10.1073/pnas.1112965109
+
+
+
+
+
+
