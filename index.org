@@ -10,11 +10,18 @@
 
 * Summary
 
+- Ivan Hanigan
+- Michael Hutchinson
+- Luciana Porfirio
+
+* Software
+
+- [[https://github.com/ivanhanigan/HutchinsonDroughtIndex]]
+
 #+begin_src R :session *R* 
 SOFTWARE PACKAGE   Hutchinson Drought Index R-package
 DEVELOPER   Ivan Hanigan (Australian National University)
 APPLICATION   Calculate extreme weather events in point and grid form, reflecting agricultural droughts by using rainfall data only.
-
 #+end_src
 
 * Background
@@ -31,9 +38,9 @@ The R-package was developed with financial support from Professor Tony McMichael
 
 1. Smith, D. I, Hutchinson, M. F, & McArthur, R. J. (1992) Climatic and Agricultural Drought: Payments and Policy. (Centre for Resource and Environmental Studies, Australian National University, Canberra, Australia.
 
-2. Hanigan, IC, Butler, CD, Kokic, PN, Hutchinson, MF. Suicide and Drought in New South Wales, Australia, 1970-2007. Proceedings of the National Academy of Science USA 2012, vol. 109 no. 35 13950-13955, doi: 10.1073/pnas.1112965109
+2. Hanigan, IC, Butler, CD, Kokic, PN, Hutchinson, MF. (2012) Suicide and Drought in New South Wales, Australia, 1970-2007. Proceedings of the National Academy of Science USA, vol. 109 no. 35 13950-13955, [[http://dx.doi.org/10.1073/pnas.1112965109]]
 
-
+3. Hanigan, IC (2012): Monthly drought data for Australia 1890-2008 using the Hutchinson Drought Index. The Australian National University Australian Data Archive. [[http://dx.doi.org/10.4225/13/50BBFD7E6727A]]
 
 
 
