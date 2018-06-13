@@ -9,8 +9,8 @@ The index was invented by Professor Mike Hutchinson at the ANU in 1992 and
 this project includes R codes written by Ivan Hanigan to describe the calculations 
 and also to download data to play with.
 
-Casual readers will probably want to go straight to 
-~/reports/HutchinsonDroughtIndex_transformations_doc.pdf
+Casual readers will probably want to go straight to Hutchinson's original report
+[https://github.com/ivanhanigan/HutchinsonDroughtIndex/blob/master/inst/doc/HutchinsonDroughtIndex-original.pdf](https://github.com/ivanhanigan/HutchinsonDroughtIndex/blob/master/inst/doc/HutchinsonDroughtIndex-original.pdf)
 
 Readers wishing to reproduce the data analysis can do so by running the 'go.r' script
 (see the Specification.txt file for explanations of the structure of the code).
