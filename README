@@ -1,4 +1,5 @@
 The Hutchinson Drought Index
+---
 
 The Hutchinson Drought Index (or Drought Severity Index) is a climatic drought index 
 that was designed to reflect agricultural droughts using only rainfall data.
@@ -40,5 +41,3 @@ The citations for the datasets used in this demonstration are:
    downloaded on 2012-01-09 
    from http://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1259.0.30.0022006?OpenDocument
 
-Ivan Hanigan
-2012-02-24
